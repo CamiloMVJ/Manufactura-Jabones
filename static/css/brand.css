@@ -1,0 +1,250 @@
+/* FRIDAYS Signature. Identidad central: vino, oro antiguo, marfil y tinta. */
+:root {
+  --primary: #315e50;
+  --primary-hover: #24483d;
+  --primary-soft: #edf4ef;
+  --gold: #b8914b;
+  --gold-dark: #78591f;
+  --gold-soft: #f5eedf;
+  --ink: #2c2427;
+  --muted: #746b6d;
+  --bg: #f7f5f1;
+  --surface: #fff;
+  --border: #eae4df;
+  --success: #346b50;
+  --success-soft: #edf5ef;
+  --warning: #805e20;
+  --warning-soft: #faf2df;
+  --danger: #a13844;
+  --shadow: 0 3px 15px #3d202804;
+}
+body {color:var(--ink);background:var(--bg)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible {outline-color:#9c743cb3}
+input::placeholder,textarea::placeholder {color:#8c8084}
+h1 {letter-spacing:-.8px;color:#32232b}
+.eyebrow {color:#8b6e41;letter-spacing:1.8px}
+.subtitle {color:#7c7175}
+.brand {gap:10px}
+.brand-logo {display:block;width:49px;height:49px;object-fit:contain;flex-shrink:0}
+.brand-text {color:#432631;font-size:19px;letter-spacing:2.1px;font-weight:750}
+.brand-text small {color:#947b50;letter-spacing:2px}
+.sidebar {border-right-color:#e8dfd6;background:#fffefc}
+.workspace {border-color:#e9e0d5;background:#fcfaf5}
+.workspace-icon {background:#f3ecdf;color:#8e6b32}
+.workspace small {color:#837672}
+.nav-caption {color:#8c7b71;font-size:9px;letter-spacing:1.4px}
+.nav-link {color:#70646a;font-weight:500}
+.nav-link:hover {background:#f8f3ec;color:#6b293c}
+.nav-link.active {background:#edf4ef;color:#315e50;border-left-color:#b8914b}
+.nav-active-dot {background:#ae8443}
+.connection {color:#80736b}
+.sidebar-version {color:#7f6d58;letter-spacing:1px}
+.logout {border-top-color:#eae1d7}
+.sidebar-collapsed .brand {padding:0;justify-content:center}
+.sidebar-collapsed .brand-logo {width:45px;height:45px}
+.topbar {background:#24483d;border-color:#dec99e;border-bottom:2px solid #b8914b;color:#fffaf0}
+.breadcrumbs {color:#fff7ed}
+.breadcrumb-root {color:#e0c5c8}
+.breadcrumb-chevron {color:#c9a582}
+.topbar .today {color:#e6cfd1}
+.topbar .icon-button {color:#efdfcf}
+.topbar .icon-button:hover {background:#ffffff12;color:#fff}
+.topbar .avatar {background:#f3e8d4;color:#6b2538;border:1px solid #dfc99b}
+.topbar #notification-dot {background:#e8bb67;border:1px solid #24483d;width:7px;height:7px}
+.topbar .notification-panel {color:var(--ink);border-color:#e8dcc8}
+.notification-panel p {color:#76686b}
+.avatar {background:#f3e9db;color:#74283a}
+.btn-primary {background:#315e50;box-shadow:0 2px 4px #62233213;border-color:#315e50}
+.btn-primary:hover {background:#24483d;border-color:#24483d}
+.btn-secondary {border-color:#ddd3c9;color:#67565e;background:#fffefd}
+.btn-secondary:hover {background:#faf6ef;border-color:#c7b592}
+.btn-danger {background:#a13844}
+.icon-button {color:#867477}
+.icon-button:hover {background:#f4eee8;color:#703047}
+.text-link,.panel-bottom-link {color:#315e50}
+.panel-bottom-link {border-color:var(--border)}
+.panel-bottom-link:hover {background:#fcf6f4}
+.panel {border-color:#eae3dc;box-shadow:0 4px 18px #4f263203}
+.panel-heading p {color:#827574}
+.panel-heading>.icon {color:#846c43}
+.kpi-card {border-color:#e9e1d8}
+.kpi-icon {color:#976c34;background:#f7f0e2}
+.kpi-icon.warning {background:#fbf0db;color:#916421}
+.kpi-top {color:#7c6b70}
+.kpi-value {color:#422a35;letter-spacing:-.8px}
+.kpi-card p {color:#827875}
+.skeleton {background:#f1ebe4;color:transparent}
+.module-workspace {border-color:#e4d9ca}
+.module-heading h2,.section-divider h2 {color:#4d303a}
+.module-heading p {color:#82726d}
+.module-tabs {background:#ebe5dc;border:1px solid #e4dacb}
+.module-tabs button {color:#827262}
+.module-tabs button.selected {color:#70283b;background:#fffdf8;box-shadow:0 1px 3px #4020320d}
+.module-tabs button:hover {color:#632238}
+.module-tile {border-radius:11px;box-shadow:inset 0 -2px #b8914b38}
+.module-tile:hover {box-shadow:0 7px 18px #4e253514,inset 0 -2px #dfbc78}
+.module-top>span {color:#eedfca;opacity:.75}
+.module-detail {color:#fff3e3e6}
+.module-inventory {background:#315e50}
+.module-clients {background:#5b3542}
+.module-orders {background:#934052}
+.module-dispatch {background:#76583f}
+.module-billing {background:#462b36}
+.module-reports {background:#80653c}
+.module-kanban {background:#692a41}
+.module-finance {background:#89682e}
+.module-tile:focus-visible {outline-color:#b8914b}
+.section-divider>span {color:#7f694c}
+.chart-summary strong {color:#59313f}
+.chart-summary>span {color:#88766e}
+.sales-chart {border-top-color:#e9dfd0;background:repeating-linear-gradient(to top,transparent 0,transparent 46px,#eee7df 47px,transparent 48px)}
+.chart-bar {background:#d8b5bd}
+.chart-day:last-child .chart-bar,.chart-day:hover .chart-bar,.chart-day:focus .chart-bar {background:#315e50}
+.chart-day span {background:#fff;color:#847572}
+.operation-panel {background:#fbf7ee;border-color:#e9ddc7}
+.section-icon,.dispatch-heading .section-icon {background:#f1e5cd;color:#956d2d}
+.dispatch-heading .eyebrow {color:#8b6b39}
+.dispatch-total {color:#315e50}
+.operation-panel h2 {color:#624630}
+.operation-panel>p:not(.eyebrow) {color:#867454}
+.dispatch-stages>div {color:#8b785f}
+.dispatch-stages strong {color:#62452e}
+.finance-mini {border-color:#e6ddd2;background:#fffefb}
+.finance-mini>span {color:#81726b}
+.finance-mini>strong {color:#4c303a}
+.finance-mini-success {border-left-color:#6b8b69}
+.finance-mini-warning {border-left-color:#b8914b}
+.finance-mini-danger {border-left-color:#b9777e}
+.finance-mini-info {border-left-color:#805264}
+.rank-number {color:#9c865f}
+.ranking-track {background:#f1eae1}
+.ranking-track>span {background:#b99458}
+.ranking-row strong {color:#594b4e}
+.ranking-row>b,.zone-row strong {color:#794052}
+.zone-row {border-color:#eee6dc}
+.attention-row {border-color:#eee6dc}
+.attention-symbol {background:#f7edd8;color:#937030}
+.attention-row>b {color:#71515a}
+.attention-row small {color:#79695f}
+.page-footer {border-color:#e7ddd1;color:#897b70}
+.footer-divider {color:#b6a486}
+th {background:#fcfaf6;color:#827062;border-color:#ece4d9;font-weight:600}
+td {color:#74666b;border-bottom-color:#f0e9e2}
+td strong {color:#4d343f}
+tbody tr:hover {background:#fdfaf5}
+.table-subtext {color:#89786f}
+.table-toolbar input,.filter-label select,.page-size-label select {color:#705f66}
+.search-input,.filter-label select,.page-size-label select {border-color:#e3d9cd}
+.search-input .icon {color:#857053}
+.count-pill {background:#f3ece1;color:#957343}
+.pagination {border-color:#e9e0d5;color:#86756c}
+.status-button {border-color:#e6d5ce;background:#fff9f5;color:#842e43}
+.status-button:hover {background:#f7e9e9}
+.view-switch {background:#eee7dd}
+.view-switch button {color:#8e7965}
+.view-switch button.selected {background:#fffdf9;color:#792b40}
+.kanban-column {background:#f8f5ef;border-color:#e9e0d5}
+.stage-column-pendiente {border-top-color:#ba944c}
+.stage-column-preparado {border-top-color:#a66b80}
+.stage-column-en_ruta {border-top-color:#7b9199}
+.stage-column-entregado {border-top-color:#81a18b}
+.kanban-column-heading>strong {color:#774052}
+.kanban-column-heading p {color:#7b6755}
+.kanban-count {background:#eee6d8;color:#8f724c}
+.kanban-card {border-color:#e9dfd4;background:#fffefb}
+.kanban-card:hover {border-color:#d3b987;box-shadow:0 3px 12px #60304408}
+.kanban-card.aged-order {border-left-color:#bd9757}
+.order-number {color:#872d46}
+.kanban-client {color:#47323d}
+.kanban-client:hover {color:#315e50}
+.kanban-products,.kanban-zone,.order-age {color:#89776e}
+.kanban-card-total {border-color:#eee4d9}
+.kanban-card-total>span {color:#7b654f}
+.kanban-card-total strong {color:#713445}
+.kanban-advance {border-color:#e6d5c0;background:#faf2e7;color:#7d5529}
+.kanban-advance:hover {background:#f3e5ce}
+.kanban-empty {border-color:#e4d9ca;color:#b3a086}
+.kanban-empty strong,.kanban-empty span {color:#7d6853}
+.kanban-help {border-color:#e9dfd3;color:#7c6756}
+.kanban-more {background:#f0e7d7;color:#856037}
+.kanban-column.drop-ready {background:#f7ecd7;border-color:#b8914b;outline-color:#ba934d}
+.order-progress li.completed {border-bottom-color:#b99458;color:#315e50}
+.order-progress li.completed>span {background:#f4e7d1;color:#8d652f}
+.order-timeline>div {border-left-color:#e7d9c2}
+.timeline-dot {background:#b8914b}
+.order-trace>h3 {color:#78566a}
+.order-timeline small {color:#8e7a71}
+.detail-finance-action {background:#faf3e6}
+.detail-finance-action>span {color:#8b714b}
+.finance-banner {background:#faf4e7;border-color:#e9dcc0;border-left-color:#b8914b}
+.finance-banner .eyebrow {color:#977039}
+.finance-banner h2 {color:#70273b}
+.finance-banner p {color:#897355}
+.finance-currency {color:#b28a47}
+.finance-currency small {color:#80612d}
+.finance-kpi-info {border-top-color:#8d4b61}
+.finance-kpi-warning {border-top-color:#b8914b}
+.finance-kpi-danger {border-top-color:#bd7a7e}
+.finance-kpi-success {border-top-color:#7c9a7d}
+.collection-value {color:#794052}
+.collection-meter {background:#f2e8d6}
+.collection-meter>span {background:#b8914b}
+.collection-card dt {color:#8e7767}
+.collection-card dd {color:#77503d}
+.collection-card>p {color:#786859}
+.cashflow-expense,.chart-legend>.expense-key:before {background:#a96375}
+.cashflow-collected,.chart-legend>.collected-key:before {background:#728a70}
+.cashflow-day small {color:#786455}
+.payment-balance {background:#f9f0e0;color:#8a662b}
+.field {color:#705a64}
+.field input,.field select,.field textarea {border-color:#e2d6ca;color:#3c2c34;background:#fffefc}
+.dialog-header,.dialog-footer {border-color:#e9dfd4}
+.dialog-header .eyebrow {color:#967243}
+.dialog-footer {background:#fcf9f3}
+.toast {border-color:#e2ddcf;box-shadow:0 6px 28px #4a253a12}
+.info-banner {background:#faf3e5;border-color:#e9dcc0;color:#84642e}
+.permission-panel>p,.profile-fields dt {color:#88736d}
+.profile-fields dd {color:#68404f}
+.login-story {background:#f5f0e6;border-color:#e5d3b4;border-right-width:2px}
+.login-story h1 {color:#4b2635;font-size:46px;letter-spacing:-1.6px}
+.login-story h1 span {color:#996f30}
+.login-tag {color:#8f6b35;border-left-color:#b8914b}
+.login-story-content>p {color:#83715f}
+.login-feature {color:#70524c}
+.login-feature .icon {color:#aa8242}
+.login-story-footer {color:#977b52;letter-spacing:1.3px}
+.login-main {background:#fffefd}
+.login-form-wrap h2 {color:#4d2938}
+.login-security {color:#8a786e;border-color:#e9dfd3}
+.login-help {color:#89776e}
+.login-mobile-brand {color:#315e50}
+.login-main footer {color:#806a51}
+.login-mobile-logo {display:none}
+@media(max-width:900px) {.login-story h1 {font-size:35px}}
+@media(max-width:700px) {
+  .sidebar-collapsed .brand {justify-content:flex-start;padding:0 10px}
+  .sidebar-collapsed .brand-logo {width:49px;height:49px}
+  .kanban-mobile-tabs {border-color:#e7dccc}
+  .kanban-mobile-tabs>button {color:#78614f}
+  .kanban-mobile-tabs>button>span {background:#f2eadd;color:#8a704b}
+  .kanban-mobile-tabs>button.selected {color:#7b2b40;border-bottom-color:#b8914b}
+  .kanban-mobile-tabs>button.selected>span {background:#ecddc2;color:#805d25}
+  .login-mobile-brand {display:flex;align-items:center;gap:12px;font-size:16px;color:#56283a;letter-spacing:1.4px;margin-bottom:38px}
+  .login-mobile-logo {display:block;width:48px;height:48px;object-fit:contain}
+}
+/* Cobertura de los módulos Enterprise incorporados durante la actualización. */
+.nav-link .nav-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.topbar-search-wrap{min-width:0;max-width:350px;margin-inline:14px}
+.breadcrumbs>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.module-purchases{background:#7d2a3f}.module-manufacturing{background:#5c3544}.module-quality{background:#7b6540}.module-analytics{background:#774454}.module-admin{background:#49323b}.module-project{background:#846534}
+.enterprise-module-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.erp-flow-panel{border-color:#e7ddcd;background:#fffefb}.flow-stage{background:#fbf7ee;border-color:#e8dcc8}.flow-stage:hover{background:#f6eddd}.stage-icon-wrap{background:#f1e4cb;color:#8c672d}.stage-info strong{color:#643746}.stage-info small{color:#826f5b}.flow-connector{color:#b08e54}
+.attention-box{background:#fcf6e9;border-color:#e9d6ad}.attention-header{color:#89642b}.attention-chip{border-color:#e4cfaa;color:#795429}.attention-chip:hover{background:#f4e7cf}.chip-purple{border-color:#ddc4cb;color:#803149}.chip-info{border-color:#d3c2a9;color:#7f643d}
+.workflow-banner{background:#fbf7ef;border-color:#e6dac7}.workflow-step{color:#8c7565}.workflow-step.active{color:#315e50}.step-num{background:#efe3ce;color:#94713b}.workflow-step.active .step-num{background:#315e50;color:#fff}.step-sep{color:#c5af8d}
+.trace-header-card,.trace-subitem{background:#fbf7ed}.node-badge{background:#f2e8d6;color:#8c682e}.trace-node h4,.monitor-tile strong,.launcher-card strong,.health-status-text{color:#58323f}.trace-node p,.monitor-tile small,.launcher-card small{color:#7f6c60}.trace-arrow{color:#b08e55}
+.monitor-tile{background:#fcf8f0;border-color:#e7dbca}.system-meta-footer{background:#fbf7ee;border-color:#e6d9c7}.health-counts-grid>div{background:#faf5eb}.launcher-card{background:#fcf7ed;border-color:#e9dcc6}.launcher-card:hover{border-color:#b8914b;background:#fffdf8}.launcher-card .icon{color:#9b753b}
+.analytics-hero-banner{background:#faf2e3;border-color:#e4cfaa}.analytics-hero-banner h2{color:#315e50}.analytics-hero-banner p{color:#8c6a35}.analytics-live-tag{background:#efe2c7;color:#8d652b}
+.search-modal-header{border-color:#e5d7c4}.search-category-title{color:#95713d}.search-result-item:hover{background:#faf2e4}.search-modal-footer{background:#fcf8ef;border-color:#eadfce}.search-modal-header kbd{color:#8a704b;background:#f3e9d8}
+@media(max-width:1190px){.enterprise-module-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.topbar-search-wrap{display:none}.topbar-actions{gap:12px}}
+@media(max-width:700px){.enterprise-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.erp-flow-panel{padding:15px}.erp-flow-pipeline{padding-bottom:0}.flow-stage{min-width:0}.system-meta-footer{flex-wrap:wrap;gap:8px}.trace-search-box{flex-wrap:wrap}.trace-search-box input{min-width:0;width:100%}.health-counts-grid{grid-template-columns:1fr}.launcher-grid{padding:16px;gap:10px}}
+
