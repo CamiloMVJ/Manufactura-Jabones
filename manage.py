@@ -27,7 +27,7 @@ def create_admin():
     print("Administrador creado. Ingresa en /login con tus credenciales.")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Administración local de ESPUMA ERP")
+    parser = argparse.ArgumentParser(description="Administración local de Pura Cocos ERP")
     parser.add_argument("command", choices=["create-admin"])
     parser.parse_args()
     try:

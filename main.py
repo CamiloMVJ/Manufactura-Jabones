@@ -18,7 +18,7 @@ async def lifespan(app):
     yield
     engine.dispose()
 
-app = FastAPI(title="ESPUMA ENTERPRISE SUITE", version="2.0.0", lifespan=lifespan)
+app = FastAPI(title="Pura CocosENTERPRISE SUITE", version="2.0.0", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
 app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_credentials=True, allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"], allow_headers=["Authorization", "Content-Type"])

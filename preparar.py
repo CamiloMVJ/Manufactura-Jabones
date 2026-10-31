@@ -9,7 +9,7 @@ def prepare():
  with SessionLocal() as db:
   products=db.query(Product).count();admins=db.query(User).filter_by(role='administrador',is_active=True).count()
  if not products:
-  print('ESPUMA: elige el contenido inicial.')
+  print('Pura Cocos: elige el contenido inicial.')
   print('1. Práctica con insumos ficticios (no usar como inventario real).')
   print('2. Negocio real: catálogo y recetas, todas las existencias en cero.')
   choice=input('Opción [1/2]: ').strip()
