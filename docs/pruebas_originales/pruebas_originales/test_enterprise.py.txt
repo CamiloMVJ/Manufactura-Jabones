@@ -1,0 +1,285 @@
+"""Pruebas de la Suite Enterprise: Compras, Inventario, Manufactura, Calidad, Trazabilidad y Monitores."""
+import json
+import os
+from pathlib import Path
+import socket
+import subprocess
+import sys
+import tempfile
+import time
+import unittest
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+
+ROOT = Path(__file__).resolve().parents[1]
+
+class EnterpriseSuiteTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="fridays-enterprise-")
+        cls.db_path = Path(cls.temp.name) / "test_enterprise.sqlite"
+        cls.env = {
+            **os.environ,
+            "DATABASE_URL": "sqlite:///" + cls.db_path.as_posix(),
+            "SECRET_KEY": "test-only-enterprise-secret-key-32-chars-min",
+            "APP_ENV": "development",
+            "PYTHONDONTWRITEBYTECODE": "1"
+        }
+        os.environ.update({key: cls.env[key] for key in ("DATABASE_URL", "SECRET_KEY", "APP_ENV")})
+        sys.path.insert(0, str(ROOT))
+        for mod in list(sys.modules.keys()):
+            if mod.startswith("app."):
+                del sys.modules[mod]
+        
+        from app.db.database import init_db, SessionLocal
+        from app.models.erp_models import User, Client, Product, Supplier, Warehouse
+        from app.core.security import get_password_hash
+        init_db()
+        with SessionLocal() as db:
+            hashed = get_password_hash("test-pass-123")
+            db.add(User(username="admin", email="admin@example.test", hashed_password=hashed, role="administrador", is_active=True))
+            db.add(User(username="sales", email="sales@example.test", hashed_password=hashed, role="vendedor", is_active=True))
+            db.add(Client(name="Cliente Prueba Enterprise", email="client@example.test", zone="Rivas"))
+            db.add(Product(name="Café Pergamino Verde", price=2000.0, stock=50, category="Materia Prima"))
+            db.add(Product(name="Bolsas 500g", price=5.0, stock=200, category="Empaques"))
+            db.add(Product(name="Café Gourmet Molido 500g", price=180.0, stock=20, category="Bebidas"))
+            db.add(Supplier(name="Cooperativa Norte", tax_id="J031000", contact_name="Don Juan", category="Granos"))
+            db.add(Warehouse(code="BOD-01", name="Almacén Central"))
+            db.commit()
+
+        with socket.socket() as sock:
+            sock.bind(("127.0.0.1", 0))
+            cls.port = sock.getsockname()[1]
+        cls.base = f"http://127.0.0.1:{cls.port}"
+        cls.log = open(Path(cls.temp.name) / "server.log", "w", encoding="utf-8")
+        cls.start_server()
+        cls.tokens = {}
+        for name in ("admin", "sales"):
+            code, data = cls.request("POST", "/auth/login", {"username": name, "password": "test-pass-123"}, form=True)
+            assert code == 200, data
+            cls.tokens[name] = data["access_token"]
+
+    @classmethod
+    def start_server(cls):
+        cls.stop_file = Path(cls.temp.name) / "stop-server"
+        cls.stop_file.unlink(missing_ok=True)
+        cls.env["ERP_TEST_STOP_FILE"] = str(cls.stop_file)
+        cls.process = subprocess.Popen([sys.executable, str(ROOT / "tests" / "run_server.py"), str(cls.port)], cwd=ROOT, env=cls.env, stdout=cls.log, stderr=cls.log)
+        for _ in range(100):
+            try:
+                with urlopen(cls.base + "/health", timeout=1) as response:
+                    if response.status == 200:
+                        return
+            except OSError:
+                if cls.process.poll() is not None:
+                    break
+                time.sleep(.1)
+        raise RuntimeError("No inició el servidor de pruebas.")
+
+    @classmethod
+    def request(cls, method, path, data=None, user="admin", form=False, raw=False):
+        headers = {}
+        if user and user in cls.tokens:
+            headers["Authorization"] = "Bearer " + cls.tokens[user]
+        body = None
+        if data is not None:
+            body = (urlencode(data) if form else json.dumps(data)).encode()
+            headers["Content-Type"] = "application/x-www-form-urlencoded" if form else "application/json"
+        request = Request(cls.base + path, data=body, method=method, headers=headers)
+        try:
+            response = urlopen(request, timeout=15)
+        except HTTPError as error:
+            response = error
+        with response:
+            content = response.read()
+            return response.status, content if raw else json.loads(content)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.stop_server()
+        cls.log.close()
+        from app.db.database import engine
+        engine.dispose()
+        for mod in list(sys.modules.keys()):
+            if mod.startswith("app."):
+                del sys.modules[mod]
+        try:
+            cls.temp.cleanup()
+        except Exception:
+            pass
+
+    @classmethod
+    def stop_server(cls):
+        cls.stop_file.touch()
+        try:
+            cls.process.wait(timeout=10)
+        except Exception:
+            cls.process.kill()
+
+    # --- PRUEBAS DE PÁGINAS ENTERPRISE ---
+    def test_enterprise_pages_render_without_unrendered_tags(self):
+        pages = [
+            "/compras", "/compras.html",
+            "/inventario", "/inventario.html",
+            "/manufactura", "/manufactura.html",
+            "/calidad", "/calidad.html",
+            "/analitica", "/analitica.html",
+            "/administracion", "/administracion.html",
+            "/proyecto", "/proyecto.html"
+        ]
+        for path in pages:
+            code, body = self.request("GET", path, raw=True, user=None)
+            self.assertEqual(code, 200, f"Error cargando página {path}")
+            self.assertNotIn(b"{{", body, f"Tag Jinja sin renderizar en {path}")
+
+    # --- PRUEBAS DE ABASTECIMIENTO / PROCUREMENT ---
+    def test_procurement_flow(self):
+        # 1. Crear solicitud de compra
+        pr_data = {
+            "requested_by": "Jefe Planta",
+            "department": "Planta Industrial",
+            "notes": "Compra granos verde",
+            "items": [{"product_id": 1, "quantity": 10, "estimated_unit_price": 2000.0}]
+        }
+        code, pr = self.request("POST", "/enterprise/purchase-requests", pr_data, "admin")
+        self.assertEqual(code, 200)
+        self.assertTrue(pr["code"].startswith("REQ-2026-"))
+
+        # 2. Consultar bandeja de aprobaciones
+        code, approvals = self.request("GET", "/enterprise/approvals?status=pending", user="admin")
+        self.assertEqual(code, 200)
+        self.assertTrue(any(a["document_code"] == pr["code"] for a in approvals))
+        apv_id = next(a["id"] for a in approvals if a["document_code"] == pr["code"])
+
+        # 3. Aprobar solicitud
+        code, apv_res = self.request("POST", f"/enterprise/approvals/{apv_id}/action", {"action": "approve", "notes": "OK"}, "admin")
+        self.assertEqual(code, 200)
+
+        # 4. Crear Orden de Compra
+        po_data = {
+            "supplier_id": 1,
+            "expected_delivery_date": "2026-11-20",
+            "items": [{"product_id": 1, "quantity": 10, "unit_price": 2000.0}]
+        }
+        code, po = self.request("POST", "/enterprise/purchase-orders", po_data, "admin")
+        self.assertEqual(code, 200)
+        self.assertTrue(po["code"].startswith("PO-2026-"))
+
+        # 5. Recepción de Material y generación de Lote
+        rec_data = {
+            "purchase_order_id": po["id"],
+            "warehouse_id": 1,
+            "items": [{"product_id": 1, "quantity_received": 10, "lot_number": "LOT-TEST-REC-01"}]
+        }
+        code, rec = self.request("POST", "/enterprise/material-receptions", rec_data, "admin")
+        self.assertEqual(code, 200)
+        self.assertTrue(rec["code"].startswith("REC-2026-"))
+
+        # Verificar que el lote se creó en el inventario
+        code, lots = self.request("GET", "/enterprise/lots", user="admin")
+        self.assertEqual(code, 200)
+        self.assertTrue(any(l["lot_number"] == "LOT-TEST-REC-01" for l in lots))
+
+    # --- PRUEBAS DE MANUFACTURA ---
+    def test_manufacturing_flow(self):
+        # 1. Crear Orden de Producción
+        op_data = {
+            "product_id": 3, # Café Gourmet Molido
+            "planned_quantity": 25,
+            "notes": "Lote prueba manufactura"
+        }
+        code, op = self.request("POST", "/enterprise/production-orders", op_data, "admin")
+        self.assertEqual(code, 200)
+        self.assertEqual(op["status"], "draft")
+
+        # 2. Avanzar a En Producción
+        code, op = self.request("PATCH", f"/enterprise/production-orders/{op['id']}/status", {"status": "in_production"}, "admin")
+        self.assertEqual(code, 200)
+        self.assertEqual(op["status"], "in_production")
+
+        # 3. Avanzar a Control de Calidad
+        code, op = self.request("PATCH", f"/enterprise/production-orders/{op['id']}/status", {"status": "quality_control"}, "admin")
+        self.assertEqual(code, 200)
+        self.assertEqual(op["status"], "quality_control")
+
+        # 4. Completar Orden
+        code, op = self.request("PATCH", f"/enterprise/production-orders/{op['id']}/status", {"status": "completed"}, "admin")
+        self.assertEqual(code, 200)
+        self.assertEqual(op["status"], "completed")
+        self.assertEqual(op["produced_quantity"], 25.0)
+
+    # --- PRUEBAS DE CALIDAD & NO CONFORMIDADES ---
+    def test_quality_and_disposition(self):
+        # 1. Inspección conforme
+        qc_data = {
+            "product_id": 3,
+            "inspection_type": "finished_goods",
+            "result": "passed",
+            "expected_value": "Humedad < 12%",
+            "measured_value": "Humedad 11.0%",
+            "observations": "Parámetros óptimos"
+        }
+        code, qc = self.request("POST", "/enterprise/quality/inspections", qc_data, "admin")
+        self.assertEqual(code, 200)
+        self.assertEqual(qc["result"], "passed")
+
+        # 2. Inspección no conforme genera No Conformidad
+        qc_fail = {
+            "product_id": 3,
+            "inspection_type": "finished_goods",
+            "result": "failed",
+            "observations": "Sellado defectuoso en empaque",
+            "disposition": "rework"
+        }
+        code, qc_f = self.request("POST", "/enterprise/quality/inspections", qc_fail, "admin")
+        self.assertEqual(code, 200)
+        self.assertEqual(qc_f["result"], "failed")
+
+        # Consultar No Conformidades
+        code, q_dash = self.request("GET", "/enterprise/quality/dashboard", user="admin")
+        self.assertEqual(code, 200)
+        self.assertTrue(len(q_dash["non_conformities"]) > 0)
+        nc_id = q_dash["non_conformities"][0]["id"]
+
+        # 3. Aplicar Disposición
+        code, disp_res = self.request("PATCH", f"/enterprise/quality/non-conformities/{nc_id}/disposition", {"disposition": "rework", "notes": "Reprocesado"}, "admin")
+        self.assertEqual(code, 200)
+        self.assertEqual(disp_res["status"], "resolved")
+
+    # --- PRUEBAS DE TRAZABILIDAD & BÚSQUEDA GLOBAL ---
+    def test_traceability_and_search(self):
+        # Ejecutar flujo demostrativo completo
+        code, flow_res = self.request("POST", "/enterprise/workflow/execute-demo-flow", user="admin")
+        self.assertEqual(code, 200)
+        self.assertEqual(flow_res["status"], "success")
+        lot_fg = flow_res["flow"]["finished_goods_lot"]
+
+        # Consultar trazabilidad del lote terminado
+        code, trace = self.request("GET", f"/enterprise/lot-traceability/{lot_fg}", user="admin")
+        self.assertEqual(code, 200)
+        self.assertEqual(trace["lot"]["lot_number"], lot_fg)
+        self.assertIn("origin", trace)
+        self.assertIn("quality_inspections", trace)
+
+        # Búsqueda Global (Ctrl+K)
+        code, search_res = self.request("GET", "/enterprise/global-search?q=cafe", user="admin")
+        self.assertEqual(code, 200)
+        self.assertTrue(len(search_res["products"]) > 0 or len(search_res["lots"]) > 0)
+
+    # --- PRUEBAS DE MONITORES & SALUD DE DATOS ---
+    def test_monitors_and_health(self):
+        code, sys_h = self.request("GET", "/enterprise/system-health", user="admin")
+        self.assertEqual(code, 200)
+        self.assertEqual(sys_h["status"], "Operational")
+        self.assertIn("database", sys_h)
+        self.assertIn("server", sys_h)
+
+        code, data_h = self.request("GET", "/enterprise/data-health", user="admin")
+        self.assertEqual(code, 200)
+        self.assertIn("health_score", data_h)
+        self.assertIn("counts", data_h)
+
+if __name__ == "__main__":
+    unittest.main()
+

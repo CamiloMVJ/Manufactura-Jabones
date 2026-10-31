@@ -1,0 +1,194 @@
+/* Verificación en Chrome real mediante CDP. Requiere Node 22+ y Chrome instalado.
+ * Iniciar primero: python tests/test_system.py --serve
+ * Ejecutar: node tests/browser-check.cjs http://127.0.0.1:PUERTO
+ */
+const {spawn, spawnSync} = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const base = process.argv[2];
+assert(base && /^http:\/\/127\.0\.0\.1:\d+$/.test(base), 'Usa la URL del servidor aislado de pruebas');
+const out = path.resolve('.verification');
+fs.mkdirSync(out,{recursive:true});
+const profile = fs.mkdtempSync(path.join(out,'chrome-'));
+const chromePath = process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+const chrome = spawn(chromePath,['--headless=new','--disable-gpu','--no-first-run','--no-default-browser-check','--remote-debugging-port=0','--remote-allow-origins=http://localhost','--user-data-dir='+profile,'about:blank'],{stdio:'ignore',windowsHide:true});
+const sleep = (ms) => new Promise((r) => setTimeout(r,ms));
+let ws,seq=0; const pending = new Map(), errors = [], results = [];
+const command = (method,params={}) => new Promise((resolve,reject) => {
+  const id = ++seq;
+  const timer = setTimeout(() => {pending.delete(id);reject(new Error('CDP timeout: '+method));},15000);
+  pending.set(id,{resolve:(v) => {clearTimeout(timer);resolve(v);},reject});
+  ws.send(JSON.stringify({id,method,params}));
+});
+async function evaluate(expression) {
+  const data = await command('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});
+  if (data.exceptionDetails) throw new Error(data.exceptionDetails.text+': '+data.exceptionDetails.exception?.description);
+  return data.result.value;
+}
+async function until(expression,message) {
+  for (let i=0;i<100;i++) { if (await evaluate(expression)) return; await sleep(100); }
+  throw new Error('UI timeout: '+message+' at '+await evaluate('location.href'));
+}
+async function navigate(route) {
+  await command('Page.navigate',{url:base+route});
+  await until(`document.readyState === 'complete' && document.body?.dataset.page`, 'page loaded');
+  if (route !== '/login') await until(`document.getElementById('last-updated')?.textContent.startsWith('Actualizado')`, 'data loaded');
+}
+async function click(selector) { await evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`); }
+async function value(selector,v) { await evaluate(`(() => {const n=document.querySelector(${JSON.stringify(selector)}); n.value=${JSON.stringify(v)}; n.dispatchEvent(new Event('input',{bubbles:true})); n.dispatchEvent(new Event('change',{bubbles:true}));})()`); }
+async function screenshot(name) {
+  const {data} = await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+  fs.writeFileSync(path.join(out,name+'.png'),Buffer.from(data,'base64'));
+}
+async function viewport(width,height) { await command('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<700}); await sleep(150); }
+async function noOverflow() {
+  const dimensions = await evaluate('({viewport:innerWidth,body:document.body.scrollWidth,root:document.documentElement.scrollWidth})');
+  if (dimensions.root > dimensions.viewport+1) console.error(await evaluate(`Array.from(document.querySelectorAll('body *')).filter(n=>n.getBoundingClientRect().right>innerWidth+1).map(n=>({tag:n.tagName,cls:n.className,id:n.id,right:n.getBoundingClientRect().right,width:n.getBoundingClientRect().width})).slice(0,20)`));
+  assert(dimensions.root <= dimensions.viewport+1,JSON.stringify(dimensions));
+}
+async function run() {
+  const activePort = path.join(profile,'DevToolsActivePort');
+  for(let i=0;i<100 && !fs.existsSync(activePort);i++) await sleep(100);
+  assert(fs.existsSync(activePort),'Chrome did not start');
+  const port=fs.readFileSync(activePort,'utf8').split('\n')[0];
+  const targets=await (await fetch('http://127.0.0.1:'+port+'/json')).json();
+  ws = new WebSocket(targets.find((t) => t.type==='page').webSocketDebuggerUrl);
+  await new Promise((resolve,reject) => {ws.onopen=resolve;ws.onerror=reject;});
+  ws.onmessage=({data}) => {
+    const message=JSON.parse(data);
+    if (message.id) {
+      const p=pending.get(message.id); if(p){pending.delete(message.id); message.error ? p.reject(new Error(message.error.message)) : p.resolve(message.result);}
+    } else if (message.method==='Runtime.exceptionThrown') errors.push(message.params.exceptionDetails.exception?.description || message.params.exceptionDetails.text);
+  };
+  await command('Page.enable');await command('Runtime.enable');
+  await viewport(1440,1050);
+  await navigate('/login');await screenshot('login-desktop');
+  await value('#username','admin');await value('#password','incorrect');await click('#login-button');
+  await until(`!document.getElementById('login-error').hidden`, 'invalid login feedback');
+  await value('#password','test-pass-123');await click('#login-button');
+  await until(`document.body?.dataset.page === 'dashboard' && document.getElementById('last-updated')?.textContent.startsWith('Actualizado')`, 'successful login');
+  await until(`document.getElementById('connection-label')?.textContent === 'Actualizaciones en vivo'`, 'authenticated websocket');
+  results.push('Login: invalid credentials, valid credentials and live connection');
+  assert.equal(await evaluate(`document.querySelectorAll('[data-module]:not([hidden])').length`),8);
+  await click('[data-module-filter="operations"]');
+  assert.equal(await evaluate(`document.querySelectorAll('[data-module]:not([hidden])').length`),4);
+  await click('[data-module-filter="commercial"]');
+  assert.equal(await evaluate(`document.querySelectorAll('[data-module]:not([hidden])').length`),3);
+  await click('[data-module-filter="all"]');
+  results.push('ERP workspace: eight module launchers, financial overview and filters');
+  if (process.env.BROWSER_LAYOUT_ONLY) {await viewport(768,1024);await navigate('/');await noOverflow();await screenshot('dashboard-tablet');return;}
+  await screenshot('dashboard-desktop');
+  await click('#sidebar-toggle');assert(await evaluate(`document.body.classList.contains('sidebar-collapsed')`));await click('#sidebar-toggle');
+  for (const route of ['/clientes','/productos','/pedidos','/facturacion','/finanzas','/perfil']) {await navigate(route);await noOverflow();}
+  results.push('All modules render on desktop');
+  await navigate('/productos');
+  assert.equal(await evaluate(`document.querySelectorAll('#table-body tr').length`),10);
+  await click('#next-page');assert.match(await evaluate(`document.getElementById('pagination-label').textContent`),/^11/);
+  await value('#table-search','Producto 01');assert.equal(await evaluate(`document.querySelectorAll('#table-body tr').length`),1);
+  await value('#table-search','zzzz-no-match');assert(await evaluate(`document.getElementById('table-body').textContent.includes('No encontramos')`));
+  await value('#table-search','');await value('#table-filter','empty');assert(await evaluate(`document.getElementById('table-body').textContent.includes('Sin existencias')`));
+  await value('#table-filter','all');await value('#table-sort','name');
+  results.push('Tables: pagination, search, filters, sorting and empty state');
+  await click('[data-action="new"]');await until(`document.getElementById('form-dialog').open`,'product dialog');
+  await value('[name="name"]',`Producto <img src=x onerror="window.xssTriggered=1">`);
+  await value('[name="category"]','Prueba');await value('[name="price"]','12.50');await value('[name="stock"]','5');
+  await click('#save-button');await until(`!document.getElementById('form-dialog').open`, 'product saved');
+  await until(`!document.querySelector('[data-action="reload"]').disabled`, 'product refresh');await value('#table-search','<img');assert.equal(await evaluate('window.xssTriggered || 0'),0);
+  assert.equal(await evaluate(`document.querySelectorAll('#table-body img').length`),0);
+  await click('[data-action="edit"]');await value('[name="name"]','Producto editado');await click('#save-button');
+  await until(`!document.getElementById('form-dialog').open`, 'product edited');
+  await value('#table-search','Producto editado');await click('[data-action="delete"]');await click('#confirm-button');
+  await until(`!document.getElementById('confirm-dialog').open`, 'product deleted');
+  results.push('Products: create, edit, delete confirmation and stored HTML escaping');
+  await navigate('/clientes');await click('[data-action="new"]');await until(`document.getElementById('form-dialog').open`,'client dialog');
+  await value('[name="name"]','Cliente navegador');await value('[name="email"]','browser'+Date.now()+'@example.test');await value('[name="zone"]','Norte');await click('#save-button');
+  await until(`!document.getElementById('form-dialog').open`, 'client saved');
+  await value('#table-search','Cliente navegador');await click('[data-action="edit"]');await value('[name="contact"]','Contacto actualizado');await click('#save-button');
+  await until(`!document.getElementById('form-dialog').open`, 'client edited');
+  results.push('Clients: create and edit');
+  await navigate('/pedidos?new=1');await until(`document.getElementById('form-dialog').open`,'order dialog');
+  await value('[name="client_id"]','1');await value('[name="product_id"]','1');await value('[name="quantity"]','2');
+  assert.equal(await evaluate(`document.getElementById('order-total').textContent.replaceAll(' ','')`),'C$20.50');
+  await click('[data-action="add-line"]');await value('.order-line:last-child [name="product_id"]','3');
+  await click('#save-button');await until(`!document.getElementById('form-dialog').open`,'order saved');
+  await until(`document.querySelector('[data-action="view"]')`,'order appears');
+  assert.equal(await evaluate(`document.querySelectorAll('.kanban-column').length`),4);
+  assert.equal(await evaluate(`document.getElementById('kanban-board').hidden`),false);
+  assert.equal(await evaluate(`document.querySelectorAll('[data-stage="pendiente"] .kanban-card').length`),1);
+  await screenshot('kanban-desktop');
+  await click('[data-order-view="list"]');assert.equal(await evaluate(`document.getElementById('table-view').hidden`),false);
+  await click('[data-order-view="kanban"]');
+  await click('[data-action="advance"]');await click('#confirm-button');await until(`!document.getElementById('confirm-dialog').open`,'status advanced');
+  await until(`document.querySelectorAll('[data-stage="preparado"] .kanban-card').length === 1`,'card moved to prepared');
+  await click('[data-action="view"]');await until(`document.getElementById('detail-dialog').open`,'order details');
+  assert(await evaluate(`document.getElementById('detail-body').textContent.includes('Cliente de prueba')`));
+  assert(await evaluate(`document.querySelector('.order-timeline').textContent.includes('Pendiente') && document.querySelector('.order-timeline').textContent.includes('Preparado')`));
+  await screenshot('order-detail-desktop');await click('[data-action="close-detail"]');
+  results.push('Orders: create multiple lines, calculate total, advance status and view printable details');
+  // El arrastre utiliza la misma confirmación y la misma transición validada en la API.
+  await evaluate(`(() => {const card=document.querySelector('#kanban-board [data-stage="preparado"] .kanban-card');const column=document.querySelector('#kanban-board [data-stage="en_ruta"]');const transfer=new DataTransfer();card.dispatchEvent(new DragEvent('dragstart',{bubbles:true,dataTransfer:transfer}));column.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer:transfer}));column.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer:transfer}));})()`);
+  await until(`document.getElementById('confirm-dialog').open`,'drag confirmation');await click('#confirm-button');
+  await until(`!document.getElementById('confirm-dialog').open && document.querySelectorAll('[data-stage="en_ruta"] .kanban-card').length === 1`,'drag persisted');
+  results.push('Kanban: default board, list switch, four columns, buttons, drag-and-drop and real history');
+  await navigate('/facturacion');await click('[data-action="view"]');await until(`document.getElementById('detail-dialog').open`,'billing preview');await click('[data-action="close-detail"]');
+  results.push('Billing: actual order preview');
+  await navigate('/finanzas');await click('[data-action="new-payment"]');await until(`document.getElementById('finance-dialog').open`,'payment form');
+  const paymentOrder = await evaluate(`document.querySelector('#finance-form [name="order_id"]').options[1].value`);
+  await value('#finance-form [name="order_id"]',paymentOrder);await value('#finance-form [name="amount"]','9999');
+  await click('#finance-save');assert(await evaluate(`document.querySelector('#finance-form [name="amount"]').validity.rangeOverflow`));
+  await value('#finance-form [name="amount"]','10.00');await value('#finance-form [name="reference"]','BROWSER-PARTIAL');await click('#finance-save');
+  await until(`!document.getElementById('finance-dialog').open && document.querySelector('.finance-kpi-success .kpi-value').textContent.replaceAll(' ','') === 'C$10.00'`,'partial payment saved');
+  await click('[data-action="new-expense"]');await until(`document.getElementById('finance-dialog').open`,'expense form');
+  await value('#finance-form [name="description"]','Combustible reparto navegador');await value('#finance-form [name="amount"]','3.50');await click('#finance-save');
+  await until(`!document.getElementById('finance-dialog').open && document.querySelector('.finance-kpi-info .kpi-value').textContent.replaceAll(' ','') === 'C$6.50'`,'expense reflected in cashflow');
+  await value('#movement-search','no-match-zz');assert(await evaluate(`document.getElementById('movement-body').textContent.includes('Sin registros')`));
+  await value('#movement-search','Combustible');assert.equal(await evaluate(`document.querySelectorAll('#movement-body tr').length`),1);
+  await value('#movement-search','');await value('#movement-filter','gasto');assert.equal(await evaluate(`document.querySelectorAll('#movement-body tr').length`),1);
+  await value('#movement-filter','all');await screenshot('finanzas-desktop');
+  await command('Browser.setDownloadBehavior',{behavior:'allow',downloadPath:path.join(out,'downloads')});
+  await click('[data-action="export-finance"]');
+  for(let i=0;i<50 && !fs.existsSync(path.join(out,'downloads','fridays-movimientos.csv'));i++) await sleep(100);
+  assert(fs.existsSync(path.join(out,'downloads','fridays-movimientos.csv')));
+  results.push('Finance: receivables, amount validation, partial payment, expense, net flow, search, filters and CSV');
+  await viewport(390,844);
+  for (const route of ['/','/clientes','/productos','/pedidos','/facturacion','/finanzas','/perfil']) {await navigate(route);await noOverflow();await screenshot((route==='/' ? 'dashboard' : route.slice(1))+'-mobile');}
+  await navigate('/pedidos?view=kanban');await click('#kanban-mobile-tabs [data-stage="entregado"]');
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('#kanban-board [data-stage="entregado"]')).display`),'block');
+  await click('#kanban-mobile-tabs [data-stage="en_ruta"]');
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('#kanban-board [data-stage="en_ruta"]')).display`),'block');
+  await screenshot('kanban-mobile');
+  await click('#sidebar-toggle');assert(await evaluate(`document.body.classList.contains('drawer-open')`));
+  await command('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});
+  assert.equal(await evaluate(`document.body.classList.contains('drawer-open')`),false);
+  await navigate('/productos');await click('[data-action="new"]');await until(`document.getElementById('form-dialog').open`,'mobile form');await noOverflow();await screenshot('product-form-mobile');await click('[data-action="close-dialog"]');
+  results.push('Mobile 390px: all modules, no page overflow, drawer, Escape, responsive forms');
+  await viewport(768,1024);await navigate('/');await noOverflow();await screenshot('dashboard-tablet');results.push('Tablet 768px: layout without page overflow');
+  await viewport(1440,1050);await navigate('/');
+  // Fallo de red recuperable: el usuario recibe un error visible y conserva la pantalla.
+  await command('Network.enable');await command('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
+  await click('[data-action="reload"]');await until(`!document.getElementById('page-error').hidden`,'network error feedback');
+  await command('Network.emulateNetworkConditions',{offline:false,latency:0,downloadThroughput:-1,uploadThroughput:-1});
+  await click('#page-error [data-action="reload"]');await until(`document.getElementById('page-error').hidden && !document.querySelector('[data-action="reload"]').disabled`,'network recovery');
+  results.push('Network failure: visible error and successful retry');
+  await click('[data-action="logout"]');await until(`document.body?.dataset.page === 'login'`,'logout');
+  await value('#username','driver');await value('#password','test-pass-123');await click('#login-button');
+  await until(`document.body?.dataset.page === 'dashboard' && document.getElementById('last-updated')?.textContent.startsWith('Actualizado')`,'driver login');
+  assert.equal(await evaluate(`!!document.querySelector('[data-write]:not([hidden])')`),false);
+  await navigate('/perfil');assert(await evaluate(`document.getElementById('profile-role').textContent === 'Repartidor'`));
+  assert.equal(await evaluate(`!!document.querySelector('[data-finance]:not([hidden])')`),false);
+  await navigate('/pedidos?view=kanban');
+  const driverButton = await evaluate(`document.querySelector('[data-stage="en_ruta"] [data-action="advance"]')?.textContent`);
+  assert(driverButton?.includes('Entregado'));
+  results.push('Driver: role-specific controls and actual profile');
+  assert.deepEqual(errors,[], 'No uncaught JavaScript errors');
+  const report={passed:results.length,checks:results,errors};
+  fs.writeFileSync(path.join(out,'browser-report.json'),JSON.stringify(report,null,2));
+  console.log(JSON.stringify(report,null,2));
+}
+run().catch(async (error) => {console.error(error);try{if(ws?.readyState===1)await screenshot('failure');}catch(_){}process.exitCode=1;}).finally(async () => {
+  if(ws?.readyState===1) {try{await command('Browser.close');}catch(_){}ws.close();}
+  if(process.platform==='win32') spawnSync('taskkill',['/PID',String(chrome.pid),'/T','/F'],{stdio:'ignore',windowsHide:true});else chrome.kill();
+});
+
+
