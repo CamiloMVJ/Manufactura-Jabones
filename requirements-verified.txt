@@ -1,0 +1,18 @@
+# Dependencias directas del entorno con el que se verificó esta actualización.
+# Instalación reproducible de estas versiones; no es un lock de dependencias transitivas.
+fastapi==0.162.0
+uvicorn==0.54.0
+sqlalchemy==2.1.6
+python-dotenv==1.2.4
+pandas==3.1.0
+reportlab==5.1.0
+websockets==17.3
+psycopg2-binary==2.9.13
+psycopg[binary]==3.3.6
+python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.32
+bcrypt==3.2.0
+jinja2==3.1.6
+pydantic==2.14.2
+

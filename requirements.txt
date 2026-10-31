@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+sqlalchemy
+python-dotenv
+pandas
+reportlab
+websockets
+psycopg2-binary
+psycopg[binary]
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+bcrypt==3.2.0
+jinja2
+pydantic>=2,<3
+
