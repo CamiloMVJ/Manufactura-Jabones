@@ -528,3 +528,13 @@ class ContributionLog(Base):
     status = Column(String(50), default="completado")
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
+class InitialDataBatch(Base):
+    """Controla la aplicación única de un inventario de apertura."""
+    __tablename__ = 'initial_data_batches'
+    id = Column(Integer, primary_key=True)
+    code = Column(String(100), nullable=False, unique=True)
+    payload_hash = Column(String(64), nullable=False)
+    origin = Column(Text, nullable=False)
+    summary = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)

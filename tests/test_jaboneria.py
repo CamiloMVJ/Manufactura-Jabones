@@ -29,7 +29,7 @@ class SoapTest(unittest.TestCase):
    ids={p['sku']:byname[p['nombre']]['id'] for p in CATALOG['productos']}
    raw=next(p for p in products if p['category']=='Materia prima')
    # El catálogo, recetas y pantallas deben cargar.
-   self.assertEqual(len(call('GET','/enterprise/boms')),5)
+   self.assertEqual(len(call('GET','/enterprise/boms')),14)
    for path in ['/','/recetas','/manufactura','/calidad','/compras','/productos','/finanzas','/static/brand/espuma.svg','/static/js/recetas.js']:
     self.assertEqual(api.get(path).status_code,200,path)
    # No se vende un insumo ni se modifica stock sin lote.

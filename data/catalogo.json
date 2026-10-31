@@ -1,27 +1,663 @@
 {
-    "marca":"Pura Cocos • Jabonería y cuidado personal",
-    "moneda":"NIO",
-    "nota":"Costos y precios ilustrativos en córdobas; sustituir por cotizaciones propias. Formulaciones piloto, sujetas a ficha técnica del proveedor y pruebas del producto terminado.",
-    "insumos":[
-     ["BASE-CL","Base de jabón transparente [g]","Materia prima",0.22,10000],
-     ["BASE-AV","Base de jabón con avena incorporada [g]","Materia prima",0.28,10000],
-     ["FR-LAV","Fragancia cosmética lavanda para jabón [g]","Materia prima",1.8,200],
-     ["FR-CIT","Fragancia cosmética cítrica para jabón [g]","Materia prima",1.8,200],
-     ["SAL","Sal de Epsom grado cosmético [g]","Materia prima",0.10,10000],
-     ["FILM","Envoltura barrera para jabón [u]","Empaques",3,300],
-     ["ETIQ","Etiqueta de producto [u]","Empaques",2,400],
-     ["BOLSA","Bolsa barrera resellable 250 g [u]","Empaques",8,100],
-     ["CAJA","Caja kraft para kit [u]","Empaques",20,50],
-     ["RELL","Relleno de papel [g]","Empaques",0.1,1000]
+  "marca": "Pura Cocos • Jabonería y cuidado personal",
+  "moneda": "NIO",
+  "nota": "Costos y precios ilustrativos en córdobas; sustituir por cotizaciones propias. Formulaciones piloto, sujetas a ficha técnica del proveedor y pruebas del producto terminado.",
+  "insumos": [
+    [
+      "BASE-CL",
+      "Base de jabón transparente [g]",
+      "Materia prima",
+      0.22,
+      10000
     ],
-    "productos":[
-     {"sku":"JAB-LAV","nombre":"Jabón de lavanda 100 g [u]","categoria":"Jabones","precio":85,"lote_base":10,"mano_obra_lote":60,"indirectos_lote":20,"ingredientes":[["BASE-CL",990],["FR-LAV",10],["FILM",10],["ETIQ",10]],"pasos":["Pesar 990 g de base transparente y 10 g de fragancia cosmética compatible.","Fundir la base con calor suave siguiendo la temperatura indicada por su fabricante, sin hervir.","Retirar del calor, añadir la fragancia a la temperatura indicada por el proveedor y mezclar sin incorporar aire.","Moldear; dejar enfriar y solidificar completamente. Revisar el peso neto de cada pieza.","Envolver con barrera contra humedad y etiquetar. No añadir agua, leche ni flores frescas."],"calidad":"Peso neto mínimo declarado 100 g por unidad; apariencia uniforme, sin exudación de fragancia, aroma homogéneo, empaque íntegro y lote legible."},
-     {"sku":"JAB-CIT","nombre":"Jabón cítrico 100 g [u]","categoria":"Jabones","precio":85,"lote_base":10,"mano_obra_lote":60,"indirectos_lote":20,"ingredientes":[["BASE-CL",990],["FR-CIT",10],["FILM",10],["ETIQ",10]],"pasos":["Usar 990 g de base transparente y 10 g de fragancia cítrica cosmética aprobada para jabón.","Fundir y mezclar según la ficha de la base; moldear y enfriar completamente.","Controlar peso, uniformidad, estabilidad y empaque. Envolver y etiquetar por lote."],"calidad":"Peso neto mínimo declarado 100 g; sin separación, envase íntegro; compatibilidad y dosificación documentadas."},
-     {"sku":"JAB-AV","nombre":"Jabón de avena sin perfume 100 g [u]","categoria":"Jabones","precio":95,"lote_base":10,"mano_obra_lote":60,"indirectos_lote":20,"ingredientes":[["BASE-AV",1000],["FILM",10],["ETIQ",10]],"pasos":["Pesar 1000 g de base comercial con avena ya incorporada; no agregar avena de cocina ni agua.","Fundir según la ficha del proveedor, moldear, enfriar y verificar peso.","Envolver cada unidad y etiquetar. Sin perfume añadido no implica hipoalergénico."],"calidad":"Peso neto mínimo declarado 100 g, distribución uniforme, barra íntegra y envuelta; ingredientes de la ficha del proveedor."},
-     {"sku":"SAL-250","nombre":"Sales de baño sin perfume 250 g [u]","categoria":"Sales de baño","precio":100,"lote_base":10,"mano_obra_lote":35,"indirectos_lote":10,"ingredientes":[["SAL",2500],["BOLSA",10],["ETIQ",10]],"pasos":["Verificar identidad, lote y grado cosmético de la sal de Epsom; trabajar con utensilios limpios y completamente secos.","Deshacer grumos sin contaminar; pesar 250 g netos en cada bolsa barrera.","Cerrar, revisar hermeticidad y etiquetar. No agregar aceites, agua, perfume ni botánicos."],"calidad":"250 g netos mínimos por bolsa; sal seca, sin contaminación visible y cierre íntegro. Uso externo en baño; no ingerir ni atribuir efectos terapéuticos."},
-     {"sku":"JABONERA","nombre":"Jabonera de bambú [u]","categoria":"Accesorios","precio":90,"costo_compra":40,"stock_demo":20,"pasos":["Comprar terminada; revisar acabado, estabilidad y drenaje; registrar recepción y lote interno."],"calidad":"Sin astillas ni bordes cortantes; limpia, íntegra y con drenaje."},
-     {"sku":"KIT","nombre":"Kit regalo lavanda y avena [u]","categoria":"Kits","precio":285,"lote_base":1,"mano_obra_lote":8,"indirectos_lote":3,"ingredientes":[["JAB-LAV",1],["JAB-AV",1],["JABONERA",1],["CAJA",1],["RELL",10],["ETIQ",1]],"pasos":["Tomar un jabón de lavanda y uno de avena ya aprobados, conservando sus etiquetas y lotes.","Agregar una jabonera y 10 g de relleno de papel a la caja kraft.","Cerrar y etiquetar el kit; registrar los lotes de sus componentes mediante la orden de ensamble."],"calidad":"Contenido completo; jabones individualmente identificados; embalaje íntegro; trazabilidad de componentes."}
+    [
+      "BASE-AV",
+      "Base de jabón con avena incorporada [g]",
+      "Materia prima",
+      0.28,
+      10000
     ],
-    "condiciones":["Fragancias al 1% del producto terminado: usar solo si la ficha de la base y el certificado IFRA vigente de la fragancia específica permiten esa concentración en jabón de enjuague. Si no, reformular antes de fabricar.","Las recetas describen masas nominales sin merma. Validar pérdidas y sobrellenado con un lote piloto antes de producir para venta; no completar el peso con agua.","La vida útil no se inventa: se establece con información de insumos, estabilidad, empaque y evaluación técnica. El sistema no asigna vencimientos ficticios a la producción.","Son productos de higiene y baño, sin promesas médicas, antibacterianas o de tratamiento."]
-   }
-   
+    [
+      "FR-LAV",
+      "Fragancia cosmética lavanda para jabón [g]",
+      "Materia prima",
+      1.8,
+      200
+    ],
+    [
+      "FR-CIT",
+      "Fragancia cosmética cítrica para jabón [g]",
+      "Materia prima",
+      1.8,
+      200
+    ],
+    [
+      "SAL",
+      "Sal de Epsom grado cosmético [g]",
+      "Materia prima",
+      0.1,
+      10000
+    ],
+    [
+      "FILM",
+      "Envoltura barrera para jabón [u]",
+      "Empaques",
+      3,
+      300
+    ],
+    [
+      "ETIQ",
+      "Etiqueta de producto [u]",
+      "Empaques",
+      2,
+      400
+    ],
+    [
+      "BOLSA",
+      "Bolsa barrera resellable 250 g [u]",
+      "Empaques",
+      8,
+      100
+    ],
+    [
+      "CAJA",
+      "Caja kraft para kit [u]",
+      "Empaques",
+      20,
+      50
+    ],
+    [
+      "RELL",
+      "Relleno de papel [g]",
+      "Empaques",
+      0.1,
+      1000
+    ],
+    [
+      "BASE-CO",
+      "Base de jabón con coco incorporado [g]",
+      "Materia prima",
+      0.27,
+      12000
+    ],
+    [
+      "BASE-KA",
+      "Base de jabón con karité incorporado [g]",
+      "Materia prima",
+      0.32,
+      12000
+    ],
+    [
+      "FR-ROS",
+      "Fragancia cosmética rosa para jabón [g]",
+      "Materia prima",
+      1.9,
+      500
+    ],
+    [
+      "FR-ROM",
+      "Fragancia cosmética romero para jabón [g]",
+      "Materia prima",
+      1.9,
+      500
+    ],
+    [
+      "BOLSA-100",
+      "Bolsa barrera resellable 100 g [u]",
+      "Empaques",
+      5,
+      250
+    ],
+    [
+      "CAJA-G",
+      "Caja kraft grande para kit [u]",
+      "Empaques",
+      28,
+      120
+    ],
+    [
+      "CINTA",
+      "Cinta de papel cortada para regalo [u]",
+      "Empaques",
+      3,
+      300
+    ]
+  ],
+  "productos": [
+    {
+      "sku": "JAB-LAV",
+      "nombre": "Jabón de lavanda 100 g [u]",
+      "categoria": "Jabones",
+      "precio": 85,
+      "lote_base": 10,
+      "mano_obra_lote": 60,
+      "indirectos_lote": 20,
+      "ingredientes": [
+        [
+          "BASE-CL",
+          990
+        ],
+        [
+          "FR-LAV",
+          10
+        ],
+        [
+          "FILM",
+          10
+        ],
+        [
+          "ETIQ",
+          10
+        ]
+      ],
+      "pasos": [
+        "Pesar 990 g de base transparente y 10 g de fragancia cosmética compatible.",
+        "Fundir la base con calor suave siguiendo la temperatura indicada por su fabricante, sin hervir.",
+        "Retirar del calor, añadir la fragancia a la temperatura indicada por el proveedor y mezclar sin incorporar aire.",
+        "Moldear; dejar enfriar y solidificar completamente. Revisar el peso neto de cada pieza.",
+        "Envolver con barrera contra humedad y etiquetar. No añadir agua, leche ni flores frescas."
+      ],
+      "calidad": "Peso neto mínimo declarado 100 g por unidad; apariencia uniforme, sin exudación de fragancia, aroma homogéneo, empaque íntegro y lote legible."
+    },
+    {
+      "sku": "JAB-CIT",
+      "nombre": "Jabón cítrico 100 g [u]",
+      "categoria": "Jabones",
+      "precio": 85,
+      "lote_base": 10,
+      "mano_obra_lote": 60,
+      "indirectos_lote": 20,
+      "ingredientes": [
+        [
+          "BASE-CL",
+          990
+        ],
+        [
+          "FR-CIT",
+          10
+        ],
+        [
+          "FILM",
+          10
+        ],
+        [
+          "ETIQ",
+          10
+        ]
+      ],
+      "pasos": [
+        "Usar 990 g de base transparente y 10 g de fragancia cítrica cosmética aprobada para jabón.",
+        "Fundir y mezclar según la ficha de la base; moldear y enfriar completamente.",
+        "Controlar peso, uniformidad, estabilidad y empaque. Envolver y etiquetar por lote."
+      ],
+      "calidad": "Peso neto mínimo declarado 100 g; sin separación, envase íntegro; compatibilidad y dosificación documentadas."
+    },
+    {
+      "sku": "JAB-AV",
+      "nombre": "Jabón de avena sin perfume 100 g [u]",
+      "categoria": "Jabones",
+      "precio": 95,
+      "lote_base": 10,
+      "mano_obra_lote": 60,
+      "indirectos_lote": 20,
+      "ingredientes": [
+        [
+          "BASE-AV",
+          1000
+        ],
+        [
+          "FILM",
+          10
+        ],
+        [
+          "ETIQ",
+          10
+        ]
+      ],
+      "pasos": [
+        "Pesar 1000 g de base comercial con avena ya incorporada; no agregar avena de cocina ni agua.",
+        "Fundir según la ficha del proveedor, moldear, enfriar y verificar peso.",
+        "Envolver cada unidad y etiquetar. Sin perfume añadido no implica hipoalergénico."
+      ],
+      "calidad": "Peso neto mínimo declarado 100 g, distribución uniforme, barra íntegra y envuelta; ingredientes de la ficha del proveedor."
+    },
+    {
+      "sku": "SAL-250",
+      "nombre": "Sales de baño sin perfume 250 g [u]",
+      "categoria": "Sales de baño",
+      "precio": 100,
+      "lote_base": 10,
+      "mano_obra_lote": 35,
+      "indirectos_lote": 10,
+      "ingredientes": [
+        [
+          "SAL",
+          2500
+        ],
+        [
+          "BOLSA",
+          10
+        ],
+        [
+          "ETIQ",
+          10
+        ]
+      ],
+      "pasos": [
+        "Verificar identidad, lote y grado cosmético de la sal de Epsom; trabajar con utensilios limpios y completamente secos.",
+        "Deshacer grumos sin contaminar; pesar 250 g netos en cada bolsa barrera.",
+        "Cerrar, revisar hermeticidad y etiquetar. No agregar aceites, agua, perfume ni botánicos."
+      ],
+      "calidad": "250 g netos mínimos por bolsa; sal seca, sin contaminación visible y cierre íntegro. Uso externo en baño; no ingerir ni atribuir efectos terapéuticos."
+    },
+    {
+      "sku": "JABONERA",
+      "nombre": "Jabonera de bambú [u]",
+      "categoria": "Accesorios",
+      "precio": 90,
+      "costo_compra": 40,
+      "pasos": [
+        "Comprar terminada; revisar acabado, estabilidad y drenaje; registrar recepción y lote interno."
+      ],
+      "calidad": "Sin astillas ni bordes cortantes; limpia, íntegra y con drenaje."
+    },
+    {
+      "sku": "KIT",
+      "nombre": "Kit regalo lavanda y avena [u]",
+      "categoria": "Kits",
+      "precio": 285,
+      "lote_base": 1,
+      "mano_obra_lote": 8,
+      "indirectos_lote": 3,
+      "ingredientes": [
+        [
+          "JAB-LAV",
+          1
+        ],
+        [
+          "JAB-AV",
+          1
+        ],
+        [
+          "JABONERA",
+          1
+        ],
+        [
+          "CAJA",
+          1
+        ],
+        [
+          "RELL",
+          10
+        ],
+        [
+          "ETIQ",
+          1
+        ]
+      ],
+      "pasos": [
+        "Tomar un jabón de lavanda y uno de avena ya aprobados, conservando sus etiquetas y lotes.",
+        "Agregar una jabonera y 10 g de relleno de papel a la caja kraft.",
+        "Cerrar y etiquetar el kit; registrar los lotes de sus componentes mediante la orden de ensamble."
+      ],
+      "calidad": "Contenido completo; jabones individualmente identificados; embalaje íntegro; trazabilidad de componentes."
+    },
+    {
+      "sku": "JAB-ROS",
+      "nombre": "Jabón de rosa 100 g [u]",
+      "categoria": "Jabones",
+      "precio": 90,
+      "lote_base": 10,
+      "mano_obra_lote": 60,
+      "indirectos_lote": 20,
+      "ingredientes": [
+        [
+          "BASE-CL",
+          990
+        ],
+        [
+          "FR-ROS",
+          10
+        ],
+        [
+          "FILM",
+          10
+        ],
+        [
+          "ETIQ",
+          10
+        ]
+      ],
+      "pasos": [
+        "Verificar fichas técnicas, identidad y lotes; pesar los insumos de la fórmula para 10 piezas nominales de 100 g.",
+        "Fundir la base comercial a la temperatura de su ficha, sin hervir ni añadir agua. No agregar ingredientes frescos.",
+        "Si contiene fragancia, incorporar solo una fragancia cosmética autorizada para jabón a la concentración de esta fórmula por la ficha de la base y su certificado IFRA.",
+        "Mezclar, moldear y dejar enfriar completamente; medir el rendimiento real y el peso neto.",
+        "Envolver cada unidad y etiquetar con ingredientes, responsable y lote."
+      ],
+      "calidad": "Peso neto declarado 100 g por unidad; apariencia homogénea, sin separación, empaque íntegro y trazabilidad. La receta nominal debe validarse con un lote piloto."
+    },
+    {
+      "sku": "JAB-ROM",
+      "nombre": "Jabón de romero 100 g [u]",
+      "categoria": "Jabones",
+      "precio": 90,
+      "lote_base": 10,
+      "mano_obra_lote": 60,
+      "indirectos_lote": 20,
+      "ingredientes": [
+        [
+          "BASE-CL",
+          990
+        ],
+        [
+          "FR-ROM",
+          10
+        ],
+        [
+          "FILM",
+          10
+        ],
+        [
+          "ETIQ",
+          10
+        ]
+      ],
+      "pasos": [
+        "Verificar fichas técnicas, identidad y lotes; pesar los insumos de la fórmula para 10 piezas nominales de 100 g.",
+        "Fundir la base comercial a la temperatura de su ficha, sin hervir ni añadir agua. No agregar ingredientes frescos.",
+        "Si contiene fragancia, incorporar solo una fragancia cosmética autorizada para jabón a la concentración de esta fórmula por la ficha de la base y su certificado IFRA.",
+        "Mezclar, moldear y dejar enfriar completamente; medir el rendimiento real y el peso neto.",
+        "Envolver cada unidad y etiquetar con ingredientes, responsable y lote."
+      ],
+      "calidad": "Peso neto declarado 100 g por unidad; apariencia homogénea, sin separación, empaque íntegro y trazabilidad. La receta nominal debe validarse con un lote piloto."
+    },
+    {
+      "sku": "JAB-CO",
+      "nombre": "Jabón de coco sin perfume 100 g [u]",
+      "categoria": "Jabones",
+      "precio": 95,
+      "lote_base": 10,
+      "mano_obra_lote": 60,
+      "indirectos_lote": 20,
+      "ingredientes": [
+        [
+          "BASE-CO",
+          1000
+        ],
+        [
+          "FILM",
+          10
+        ],
+        [
+          "ETIQ",
+          10
+        ]
+      ],
+      "pasos": [
+        "Verificar fichas técnicas, identidad y lotes; pesar los insumos de la fórmula para 10 piezas nominales de 100 g.",
+        "Fundir la base comercial a la temperatura de su ficha, sin hervir ni añadir agua. No agregar ingredientes frescos.",
+        "Si contiene fragancia, incorporar solo una fragancia cosmética autorizada para jabón a la concentración de esta fórmula por la ficha de la base y su certificado IFRA.",
+        "Mezclar, moldear y dejar enfriar completamente; medir el rendimiento real y el peso neto.",
+        "Envolver cada unidad y etiquetar con ingredientes, responsable y lote."
+      ],
+      "calidad": "Peso neto declarado 100 g por unidad; apariencia homogénea, sin separación, empaque íntegro y trazabilidad. La receta nominal debe validarse con un lote piloto."
+    },
+    {
+      "sku": "JAB-KA",
+      "nombre": "Jabón de karité sin perfume 100 g [u]",
+      "categoria": "Jabones",
+      "precio": 110,
+      "lote_base": 10,
+      "mano_obra_lote": 60,
+      "indirectos_lote": 20,
+      "ingredientes": [
+        [
+          "BASE-KA",
+          1000
+        ],
+        [
+          "FILM",
+          10
+        ],
+        [
+          "ETIQ",
+          10
+        ]
+      ],
+      "pasos": [
+        "Verificar fichas técnicas, identidad y lotes; pesar los insumos de la fórmula para 10 piezas nominales de 100 g.",
+        "Fundir la base comercial a la temperatura de su ficha, sin hervir ni añadir agua. No agregar ingredientes frescos.",
+        "Si contiene fragancia, incorporar solo una fragancia cosmética autorizada para jabón a la concentración de esta fórmula por la ficha de la base y su certificado IFRA.",
+        "Mezclar, moldear y dejar enfriar completamente; medir el rendimiento real y el peso neto.",
+        "Envolver cada unidad y etiquetar con ingredientes, responsable y lote."
+      ],
+      "calidad": "Peso neto declarado 100 g por unidad; apariencia homogénea, sin separación, empaque íntegro y trazabilidad. La receta nominal debe validarse con un lote piloto."
+    },
+    {
+      "sku": "JAB-SIN",
+      "nombre": "Jabón transparente sin perfume 100 g [u]",
+      "categoria": "Jabones",
+      "precio": 80,
+      "lote_base": 10,
+      "mano_obra_lote": 60,
+      "indirectos_lote": 20,
+      "ingredientes": [
+        [
+          "BASE-CL",
+          1000
+        ],
+        [
+          "FILM",
+          10
+        ],
+        [
+          "ETIQ",
+          10
+        ]
+      ],
+      "pasos": [
+        "Verificar fichas técnicas, identidad y lotes; pesar los insumos de la fórmula para 10 piezas nominales de 100 g.",
+        "Fundir la base comercial a la temperatura de su ficha, sin hervir ni añadir agua. No agregar ingredientes frescos.",
+        "Si contiene fragancia, incorporar solo una fragancia cosmética autorizada para jabón a la concentración de esta fórmula por la ficha de la base y su certificado IFRA.",
+        "Mezclar, moldear y dejar enfriar completamente; medir el rendimiento real y el peso neto.",
+        "Envolver cada unidad y etiquetar con ingredientes, responsable y lote."
+      ],
+      "calidad": "Peso neto declarado 100 g por unidad; apariencia homogénea, sin separación, empaque íntegro y trazabilidad. La receta nominal debe validarse con un lote piloto."
+    },
+    {
+      "sku": "SAL-100",
+      "nombre": "Sales de baño sin perfume 100 g [u]",
+      "categoria": "Sales de baño",
+      "precio": 55,
+      "lote_base": 10,
+      "mano_obra_lote": 25,
+      "indirectos_lote": 10,
+      "ingredientes": [
+        [
+          "SAL",
+          1000
+        ],
+        [
+          "BOLSA-100",
+          10
+        ],
+        [
+          "ETIQ",
+          10
+        ]
+      ],
+      "pasos": [
+        "Verificar lote y grado cosmético de la sal de Epsom. Trabajar con utensilios limpios y secos.",
+        "Pesar 100 g netos en cada bolsa barrera; no agregar agua, aceites ni fragancias.",
+        "Cerrar, comprobar peso y hermeticidad y etiquetar para uso externo en baño."
+      ],
+      "calidad": "Peso declarado 100 g por bolsa, producto seco, cierre íntegro y lote legible. Sin atribuciones terapéuticas."
+    },
+    {
+      "sku": "ESPONJA",
+      "nombre": "Esponja vegetal de luffa [u]",
+      "categoria": "Accesorios",
+      "precio": 65,
+      "costo_compra": 25,
+      "pasos": [
+        "Comprar el accesorio terminado y registrar proveedor, lote interno y recepción.",
+        "Revisar limpieza, acabado e integridad; identificar y almacenar protegido de humedad."
+      ],
+      "calidad": "Accesorio limpio e íntegro, sin bordes cortantes ni defectos visibles; trazabilidad de recepción."
+    },
+    {
+      "sku": "SISAL",
+      "nombre": "Bolsa de sisal para jabón [u]",
+      "categoria": "Accesorios",
+      "precio": 70,
+      "costo_compra": 30,
+      "pasos": [
+        "Comprar el accesorio terminado y registrar proveedor, lote interno y recepción.",
+        "Revisar limpieza, acabado e integridad; identificar y almacenar protegido de humedad."
+      ],
+      "calidad": "Accesorio limpio e íntegro, sin bordes cortantes ni defectos visibles; trazabilidad de recepción."
+    },
+    {
+      "sku": "KIT-CO",
+      "nombre": "Kit coco y esponja vegetal [u]",
+      "categoria": "Kits",
+      "precio": 225,
+      "lote_base": 1,
+      "mano_obra_lote": 10,
+      "indirectos_lote": 4,
+      "ingredientes": [
+        [
+          "JAB-CO",
+          1
+        ],
+        [
+          "ESPONJA",
+          1
+        ],
+        [
+          "CAJA",
+          1
+        ],
+        [
+          "RELL",
+          10
+        ],
+        [
+          "CINTA",
+          1
+        ],
+        [
+          "ETIQ",
+          1
+        ]
+      ],
+      "pasos": [
+        "Seleccionar los productos terminados liberados y los accesorios, conservando los lotes y etiquetas individuales.",
+        "Preparar la caja con el relleno y reunir exactamente los componentes de la fórmula.",
+        "Cerrar, colocar cinta y etiqueta y registrar la orden de ensamble y sus lotes componentes."
+      ],
+      "calidad": "Contenido completo, productos individuales identificados, empaque íntegro y trazabilidad de componentes."
+    },
+    {
+      "sku": "KIT-FLOR",
+      "nombre": "Kit floral rosa y lavanda [u]",
+      "categoria": "Kits",
+      "precio": 245,
+      "lote_base": 1,
+      "mano_obra_lote": 10,
+      "indirectos_lote": 4,
+      "ingredientes": [
+        [
+          "JAB-ROS",
+          1
+        ],
+        [
+          "JAB-LAV",
+          1
+        ],
+        [
+          "SISAL",
+          1
+        ],
+        [
+          "CAJA",
+          1
+        ],
+        [
+          "RELL",
+          10
+        ],
+        [
+          "CINTA",
+          1
+        ],
+        [
+          "ETIQ",
+          1
+        ]
+      ],
+      "pasos": [
+        "Seleccionar los productos terminados liberados y los accesorios, conservando los lotes y etiquetas individuales.",
+        "Preparar la caja con el relleno y reunir exactamente los componentes de la fórmula.",
+        "Cerrar, colocar cinta y etiqueta y registrar la orden de ensamble y sus lotes componentes."
+      ],
+      "calidad": "Contenido completo, productos individuales identificados, empaque íntegro y trazabilidad de componentes."
+    },
+    {
+      "sku": "KIT-BAÑO",
+      "nombre": "Kit baño completo [u]",
+      "categoria": "Kits",
+      "precio": 395,
+      "lote_base": 1,
+      "mano_obra_lote": 10,
+      "indirectos_lote": 4,
+      "ingredientes": [
+        [
+          "JAB-KA",
+          1
+        ],
+        [
+          "SAL-250",
+          1
+        ],
+        [
+          "JABONERA",
+          1
+        ],
+        [
+          "ESPONJA",
+          1
+        ],
+        [
+          "CAJA-G",
+          1
+        ],
+        [
+          "RELL",
+          20
+        ],
+        [
+          "CINTA",
+          1
+        ],
+        [
+          "ETIQ",
+          1
+        ]
+      ],
+      "pasos": [
+        "Seleccionar los productos terminados liberados y los accesorios, conservando los lotes y etiquetas individuales.",
+        "Preparar la caja con el relleno y reunir exactamente los componentes de la fórmula.",
+        "Cerrar, colocar cinta y etiqueta y registrar la orden de ensamble y sus lotes componentes."
+      ],
+      "calidad": "Contenido completo, productos individuales identificados, empaque íntegro y trazabilidad de componentes."
+    }
+  ],
+  "condiciones": [
+    "Fragancias al 1% del producto terminado: usar solo si la ficha de la base y el certificado IFRA vigente de la fragancia específica permiten esa concentración en jabón de enjuague. Si no, reformular antes de fabricar.",
+    "Las recetas describen masas nominales sin merma. Validar pérdidas y sobrellenado con un lote piloto antes de producir para venta; no completar el peso con agua.",
+    "La vida útil no se inventa: se establece con información de insumos, estabilidad, empaque y evaluación técnica. El sistema no asigna vencimientos ficticios a la producción.",
+    "Son productos de higiene y baño, sin promesas médicas, antibacterianas o de tratamiento."
+  ]
+}

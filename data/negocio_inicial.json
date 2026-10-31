@@ -1,0 +1,667 @@
+{
+  "version": "PURACOCOS-APERTURA-V1",
+  "origen": "Propuesta de carga inicial. Contactos ficticios, costos estimados y cantidades propuestas: sustituir por información verificada antes de operación real. No representa ventas ni compras históricas.",
+  "proveedores": [
+    {
+      "name": "Insumos Cosméticos del Pacífico",
+      "category": "Bases cosméticas",
+      "address": "Managua",
+      "email": "proveedor01@example.test",
+      "payment_terms": "Contado",
+      "tax_id": null,
+      "phone": null
+    },
+    {
+      "name": "Aromas y Esencias del Centro",
+      "category": "Fragancias cosméticas",
+      "address": "Masaya",
+      "email": "proveedor02@example.test",
+      "payment_terms": "15 días",
+      "tax_id": null,
+      "phone": null
+    },
+    {
+      "name": "Empaques Kraft Nicaragua",
+      "category": "Empaques",
+      "address": "Managua",
+      "email": "proveedor03@example.test",
+      "payment_terms": "Contado",
+      "tax_id": null,
+      "phone": null
+    },
+    {
+      "name": "Sales y Minerales del Sur",
+      "category": "Sales cosméticas",
+      "address": "Granada",
+      "email": "proveedor04@example.test",
+      "payment_terms": "15 días",
+      "tax_id": null,
+      "phone": null
+    },
+    {
+      "name": "Accesorios Naturales Nica",
+      "category": "Accesorios de baño",
+      "address": "Masaya",
+      "email": "proveedor05@example.test",
+      "payment_terms": "Contado",
+      "tax_id": null,
+      "phone": null
+    },
+    {
+      "name": "Etiquetas e Impresos del Lago",
+      "category": "Etiquetas",
+      "address": "Managua",
+      "email": "proveedor06@example.test",
+      "payment_terms": "15 días",
+      "tax_id": null,
+      "phone": null
+    },
+    {
+      "name": "Distribuciones Botánicas del Norte",
+      "category": "Bases cosméticas",
+      "address": "Estelí",
+      "email": "proveedor07@example.test",
+      "payment_terms": "Contado",
+      "tax_id": null,
+      "phone": null
+    },
+    {
+      "name": "Envases y Bolsas del Pacífico",
+      "category": "Envases",
+      "address": "León",
+      "email": "proveedor08@example.test",
+      "payment_terms": "15 días",
+      "tax_id": null,
+      "phone": null
+    }
+  ],
+  "clientes": [
+    {
+      "name": "Ana Martínez",
+      "email": "cliente01@example.test",
+      "zone": "Managua",
+      "address": "Managua; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Carlos López",
+      "email": "cliente02@example.test",
+      "zone": "Managua",
+      "address": "Managua; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "María González",
+      "email": "cliente03@example.test",
+      "zone": "Masaya",
+      "address": "Masaya; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Luis Herrera",
+      "email": "cliente04@example.test",
+      "zone": "Granada",
+      "address": "Granada; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Sofía Ramírez",
+      "email": "cliente05@example.test",
+      "zone": "León",
+      "address": "León; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Daniela Castillo",
+      "email": "cliente06@example.test",
+      "zone": "Carazo",
+      "address": "Carazo; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Pedro Morales",
+      "email": "cliente07@example.test",
+      "zone": "Rivas",
+      "address": "Rivas; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Valeria Pérez",
+      "email": "cliente08@example.test",
+      "zone": "Managua",
+      "address": "Managua; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Diego Flores",
+      "email": "cliente09@example.test",
+      "zone": "Estelí",
+      "address": "Estelí; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Gabriela Reyes",
+      "email": "cliente10@example.test",
+      "zone": "Matagalpa",
+      "address": "Matagalpa; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Andrés Vargas",
+      "email": "cliente11@example.test",
+      "zone": "Managua",
+      "address": "Managua; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Camila Mendoza",
+      "email": "cliente12@example.test",
+      "zone": "Masaya",
+      "address": "Masaya; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Tienda Esencia",
+      "email": "cliente13@example.test",
+      "zone": "Managua",
+      "address": "Managua; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Boutique Flor de Luna",
+      "email": "cliente14@example.test",
+      "zone": "Masaya",
+      "address": "Masaya; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Hotel Jardín del Lago",
+      "email": "cliente15@example.test",
+      "zone": "Granada",
+      "address": "Granada; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Spa Brisa Natural",
+      "email": "cliente16@example.test",
+      "zone": "Managua",
+      "address": "Managua; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Tienda Raíces",
+      "email": "cliente17@example.test",
+      "zone": "León",
+      "address": "León; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Hostal Las Palmeras",
+      "email": "cliente18@example.test",
+      "zone": "Rivas",
+      "address": "Rivas; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Regalos del Bosque",
+      "email": "cliente19@example.test",
+      "zone": "Estelí",
+      "address": "Estelí; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Salón Luz y Aroma",
+      "email": "cliente20@example.test",
+      "zone": "Managua",
+      "address": "Managua; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Hotel Montaña Verde",
+      "email": "cliente21@example.test",
+      "zone": "Matagalpa",
+      "address": "Matagalpa; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Tienda Cuidado Natural",
+      "email": "cliente22@example.test",
+      "zone": "Carazo",
+      "address": "Carazo; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Spa Agua Clara",
+      "email": "cliente23@example.test",
+      "zone": "Granada",
+      "address": "Granada; dirección de referencia por confirmar",
+      "contact": null
+    },
+    {
+      "name": "Boutique Aromas del Sur",
+      "email": "cliente24@example.test",
+      "zone": "Rivas",
+      "address": "Rivas; dirección de referencia por confirmar",
+      "contact": null
+    }
+  ],
+  "empleados": [
+    {
+      "code": "EMP-001",
+      "name": "Elena Rojas",
+      "position": "Coordinación general",
+      "department": "Administración",
+      "email": "personal01@example.test"
+    },
+    {
+      "code": "EMP-002",
+      "name": "Javier Torres",
+      "position": "Compras",
+      "department": "Abastecimiento",
+      "email": "personal02@example.test"
+    },
+    {
+      "code": "EMP-003",
+      "name": "Lucía Castro",
+      "position": "Elaboración de jabones",
+      "department": "Producción",
+      "email": "personal03@example.test"
+    },
+    {
+      "code": "EMP-004",
+      "name": "Mateo Silva",
+      "position": "Elaboración y envasado",
+      "department": "Producción",
+      "email": "personal04@example.test"
+    },
+    {
+      "code": "EMP-005",
+      "name": "Paula Méndez",
+      "position": "Inspección de calidad",
+      "department": "Calidad",
+      "email": "personal05@example.test"
+    },
+    {
+      "code": "EMP-006",
+      "name": "Óscar Gutiérrez",
+      "position": "Encargado de inventario",
+      "department": "Almacén",
+      "email": "personal06@example.test"
+    },
+    {
+      "code": "EMP-007",
+      "name": "Mariana Cruz",
+      "position": "Atención al cliente",
+      "department": "Ventas",
+      "email": "personal07@example.test"
+    },
+    {
+      "code": "EMP-008",
+      "name": "David Ruiz",
+      "position": "Preparación y reparto",
+      "department": "Logística",
+      "email": "personal08@example.test"
+    }
+  ],
+  "centros": [
+    {
+      "code": "MESA-01",
+      "name": "Mesa de elaboración y empaque",
+      "capacity_per_hour": 20,
+      "cost_per_hour": 60,
+      "status": "operativo"
+    },
+    {
+      "code": "PESA-01",
+      "name": "Pesaje de materias primas",
+      "capacity_per_hour": 40,
+      "cost_per_hour": 45,
+      "status": "operativo"
+    },
+    {
+      "code": "FUND-01",
+      "name": "Fusión y moldeado de bases",
+      "capacity_per_hour": 30,
+      "cost_per_hour": 75,
+      "status": "operativo"
+    },
+    {
+      "code": "ENV-01",
+      "name": "Envasado y etiquetado",
+      "capacity_per_hour": 50,
+      "cost_per_hour": 50,
+      "status": "operativo"
+    },
+    {
+      "code": "ENS-01",
+      "name": "Ensamble de kits",
+      "capacity_per_hour": 20,
+      "cost_per_hour": 55,
+      "status": "operativo"
+    }
+  ],
+  "ubicaciones": [
+    {
+      "almacen": "MP",
+      "code": "MP-01",
+      "name": "Materias primas en almacenamiento seco",
+      "aisle": "A",
+      "rack": "1",
+      "shelf": "1"
+    },
+    {
+      "almacen": "MP",
+      "code": "MP-02",
+      "name": "Fragancias cosméticas",
+      "aisle": "A",
+      "rack": "2",
+      "shelf": "1"
+    },
+    {
+      "almacen": "MP",
+      "code": "MP-03",
+      "name": "Empaques y etiquetas",
+      "aisle": "A",
+      "rack": "3",
+      "shelf": "1"
+    },
+    {
+      "almacen": "PT",
+      "code": "PT-01",
+      "name": "Productos terminados",
+      "aisle": "A",
+      "rack": "1",
+      "shelf": "1"
+    },
+    {
+      "almacen": "PT",
+      "code": "PT-02",
+      "name": "Accesorios de baño",
+      "aisle": "A",
+      "rack": "2",
+      "shelf": "1"
+    },
+    {
+      "almacen": "PT",
+      "code": "PT-03",
+      "name": "Kits y pedidos preparados",
+      "aisle": "A",
+      "rack": "3",
+      "shelf": "1"
+    }
+  ],
+  "inventario": [
+    {
+      "sku": "BASE-CL",
+      "cantidad": 30000,
+      "almacen": "MP",
+      "ubicacion": "MP-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "BASE-AV",
+      "cantidad": 18000,
+      "almacen": "MP",
+      "ubicacion": "MP-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "FR-LAV",
+      "cantidad": 200,
+      "almacen": "MP",
+      "ubicacion": "MP-02",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "FR-CIT",
+      "cantidad": 200,
+      "almacen": "MP",
+      "ubicacion": "MP-02",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "SAL",
+      "cantidad": 20000,
+      "almacen": "MP",
+      "ubicacion": "MP-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "FILM",
+      "cantidad": 1200,
+      "almacen": "MP",
+      "ubicacion": "MP-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "ETIQ",
+      "cantidad": 1800,
+      "almacen": "MP",
+      "ubicacion": "MP-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "BOLSA",
+      "cantidad": 100,
+      "almacen": "MP",
+      "ubicacion": "MP-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "CAJA",
+      "cantidad": 200,
+      "almacen": "MP",
+      "ubicacion": "MP-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "RELL",
+      "cantidad": 5000,
+      "almacen": "MP",
+      "ubicacion": "MP-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "BASE-CO",
+      "cantidad": 12000,
+      "almacen": "MP",
+      "ubicacion": "MP-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "BASE-KA",
+      "cantidad": 12000,
+      "almacen": "MP",
+      "ubicacion": "MP-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "FR-ROS",
+      "cantidad": 500,
+      "almacen": "MP",
+      "ubicacion": "MP-02",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "FR-ROM",
+      "cantidad": 500,
+      "almacen": "MP",
+      "ubicacion": "MP-02",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "BOLSA-100",
+      "cantidad": 250,
+      "almacen": "MP",
+      "ubicacion": "MP-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "CAJA-G",
+      "cantidad": 120,
+      "almacen": "MP",
+      "ubicacion": "MP-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "CINTA",
+      "cantidad": 300,
+      "almacen": "MP",
+      "ubicacion": "MP-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "JAB-LAV",
+      "cantidad": 60,
+      "almacen": "PT",
+      "ubicacion": "PT-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "JAB-CIT",
+      "cantidad": 60,
+      "almacen": "PT",
+      "ubicacion": "PT-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "JAB-AV",
+      "cantidad": 60,
+      "almacen": "PT",
+      "ubicacion": "PT-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "SAL-250",
+      "cantidad": 60,
+      "almacen": "PT",
+      "ubicacion": "PT-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "JABONERA",
+      "cantidad": 30,
+      "almacen": "PT",
+      "ubicacion": "PT-02",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "KIT",
+      "cantidad": 15,
+      "almacen": "PT",
+      "ubicacion": "PT-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "JAB-ROS",
+      "cantidad": 60,
+      "almacen": "PT",
+      "ubicacion": "PT-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "JAB-ROM",
+      "cantidad": 60,
+      "almacen": "PT",
+      "ubicacion": "PT-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "JAB-CO",
+      "cantidad": 60,
+      "almacen": "PT",
+      "ubicacion": "PT-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "JAB-KA",
+      "cantidad": 60,
+      "almacen": "PT",
+      "ubicacion": "PT-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "JAB-SIN",
+      "cantidad": 60,
+      "almacen": "PT",
+      "ubicacion": "PT-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "SAL-100",
+      "cantidad": 60,
+      "almacen": "PT",
+      "ubicacion": "PT-01",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "ESPONJA",
+      "cantidad": 30,
+      "almacen": "PT",
+      "ubicacion": "PT-02",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "SISAL",
+      "cantidad": 30,
+      "almacen": "PT",
+      "ubicacion": "PT-02",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "KIT-CO",
+      "cantidad": 15,
+      "almacen": "PT",
+      "ubicacion": "PT-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "KIT-FLOR",
+      "cantidad": 15,
+      "almacen": "PT",
+      "ubicacion": "PT-03",
+      "estado": "released",
+      "vencimiento": null
+    },
+    {
+      "sku": "KIT-BAÑO",
+      "cantidad": 15,
+      "almacen": "PT",
+      "ubicacion": "PT-03",
+      "estado": "released",
+      "vencimiento": null
+    }
+  ]
+}

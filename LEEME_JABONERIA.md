@@ -1,8 +1,10 @@
-# Espuma: jabonería y productos de baño
+# Pura Cocos: jabonería y productos de baño
 
-Adaptación del proyecto Python recibido. Nombre comercial provisional: **Espuma**. Puedes cambiarlo en las plantillas y en `data/catalogo.json`.
+Proyecto de jabonería **Pura Cocos**. La carga ampliada actual se explica en [docs/CARGA_INICIAL.md](docs/CARGA_INICIAL.md).
 
 ## Qué contiene
+
+La versión ampliada ofrece ocho jabones, dos presentaciones de sales, tres accesorios y cuatro kits; el listado siguiente describe la línea original. Consulta el catálogo completo en Recetas y costos.
 
 - Tres jabones de 100 g: lavanda, cítrico y avena sin perfume.
 - Sales de baño sin perfume en bolsa de 250 g.
@@ -18,7 +20,7 @@ Las fórmulas de jabón usan bases comerciales ya preparadas. No requieren calcu
 1. Extrae TODO el ZIP a una carpeta nueva, por ejemplo `C:\Proyectos\Espuma`. No lo pegues encima del proyecto original.
 2. Instala Python 3.10 o posterior y habilita `Add Python to PATH`.
 3. Abre `INICIAR_WINDOWS.bat`. La primera ejecución necesita Internet para instalar dependencias.
-4. Elige **1** para practicar con insumos ficticios o **2** para trabajar con inventario inicial en cero.
+4. En una base nueva se cargan los catálogos ampliados y el inventario de apertura propuesto. Para iniciar sin existencias, consulta `docs/CARGA_INICIAL.md` y ejecuta primero la opción `--sin-stock`.
 5. Crea tu administrador. Al escribir la contraseña no aparecerán caracteres en la consola.
 6. Abre <http://127.0.0.1:8000> e inicia sesión con las credenciales que acabas de elegir.
 7. Mantén abierta la consola. Detén con Ctrl+C y vuelve a usar el mismo BAT para iniciar después.
@@ -39,7 +41,7 @@ Copy-Item .env.example .env
 
 ## Primera práctica completa
 
-Selecciona el modo 1 al preparar la base. Encontrarás insumos y jaboneras, pero los jabones, sales y kits empiezan con stock cero.
+La carga ampliada contiene insumos y productos terminados con existencias de apertura propuestas. Puedes fabricar lotes adicionales siguiendo estos pasos.
 
 1. Abre **Recetas y costos** para revisar las cantidades y los controles.
 2. En **Manufactura**, crea una orden de **10 jabones de lavanda**. Deja vacío el lote preferido para que el sistema asigne lotes liberados por vencimiento (FEFO, primero el vencimiento más cercano; sin fecha al final).
@@ -56,7 +58,7 @@ Para el kit, fabrica primero lavanda y avena, y recibe jaboneras. Una orden de d
 
 ## Compras e inventario real
 
-Elige modo 2 para empezar sin existencias ficticias. Actualiza los proveedores de ejemplo antes de comprar. Sus nombres son marcadores; no representan empresas investigadas ni cotizaciones.
+Ejecuta la carga ampliada con `--sin-stock` para empezar sin existencias propuestas. Revisa los proveedores de referencia antes de comprar. Sus nombres son marcadores; no representan empresas investigadas ni cotizaciones.
 
 - Crea la orden de compra desde Compras e indica precio por unidad de inventario.
 - Si compras 1 kg de base a C$220, registra **1000 g** a **C$0.22/g**. Para 1 kg de fragancia a C$1800, registra 1000 g a C$1.80/g.
@@ -93,7 +95,7 @@ Para empezar, el administrador puede llevar la operación del pequeño taller. L
 
 Con el servidor detenido, copia `jaboneria.sqlite`, `.env` y `.secret_key` a una ubicación segura. Conserva también esta versión del código. No compartas los archivos de claves ni tu base con información real de clientes.
 
-Para pasar de práctica a operación real, conserva una copia de la base demo y cambia `DATABASE_URL` en `.env` a `sqlite:///./jaboneria_real.sqlite`. Vuelve a iniciar y elige modo 2. Es una base independiente: tendrás que crear su administrador.
+Para pasar de práctica a operación real, conserva una copia de la base demo y cambia `DATABASE_URL` en `.env` a `sqlite:///./jaboneria_real.sqlite`. Ejecuta la carga ampliada con `--sin-stock` antes de iniciar. Es una base independiente: tendrás que crear su administrador.
 
 ## Verificación y límites
 
