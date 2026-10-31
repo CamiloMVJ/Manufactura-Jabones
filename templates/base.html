@@ -1,0 +1,320 @@
+{% from 'icons.html' import icon %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#642135">
+  <title>{{ title }} · ESPUMA ENTERPRISE ERP</title>
+  <link rel="stylesheet" href="/static/css/styles.css?v=4">
+  <link rel="stylesheet" href="/static/css/brand.css?v=1">
+  <link rel="icon" type="image/svg+xml" href="/static/brand/espuma.svg">
+  <script src="/static/js/operations.js?v=5" defer></script>
+  <script src="/static/js/main.js?v=5" defer></script>
+  <script src="/static/js/enterprise.js?v=4" defer></script>
+</head>
+
+<body data-page="{{ page_id }}">
+  <a class="skip-link" href="#main">Ir al contenido</a>
+  <button class="drawer-shade" id="drawer-shade" aria-label="Cerrar navegación" hidden></button>
+  <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <a href="/recetas" class="nav-link">Recetas y costos</a>
+    <a class="brand" href="/" aria-label="ESPUMA ERP, inicio"><img class="brand-logo" src="/static/brand/espuma.svg" width="49" height="49" alt=""><span
+        class="brand-text">ESPUMA<small>ENTERPRISE SUITE</small></span></a>
+    <div class="workspace"><span class="workspace-icon">{{ icon('factory') }}</span><span
+        class="nav-label">Agroindustrial<small>Cadena Conectada</small></span><span class="workspace-dot"></span></div>
+    <nav>
+      <p class="nav-caption">PRINCIPAL</p>
+      <a class="nav-link {{ 'active' if page_id == 'dashboard' }}" href="/" aria-label="Centro de operaciones"
+        title="Centro de operaciones" {% if page_id=='dashboard' %}aria-current="page" {% endif %}>{{ icon('grid')
+        }}<span class="nav-label">Centro de operaciones</span></a>
+
+      <p class="nav-caption">OPERACIONES</p>
+      <a class="nav-link {{ 'active' if page_id == 'orders' }}" href="/pedidos" aria-label="Ventas y Pedidos"
+        title="Ventas y Pedidos" {% if page_id=='orders' %}aria-current="page" {% endif %}>{{ icon('cart') }}<span
+          class="nav-label">Ventas y Pedidos</span>{% if page_id == 'orders' %}<span class="nav-active-dot"></span>{%
+        endif %}</a>
+      <a class="nav-link {{ 'active' if page_id == 'procurement' }}" href="/compras"
+        aria-label="Compras y Abastecimiento" title="Compras y Abastecimiento" {% if page_id=='procurement'
+        %}aria-current="page" {% endif %}>{{ icon('truck') }}<span class="nav-label">Compras & Abastecimiento</span>{%
+        if page_id == 'procurement' %}<span class="nav-active-dot"></span>{% endif %}</a>
+      <a class="nav-link {{ 'active' if page_id == 'inventory' }}" href="/inventario" aria-label="Inventario y Lotes"
+        title="Inventario y Lotes" {% if page_id=='inventory' %}aria-current="page" {% endif %}>{{ icon('box') }}<span
+          class="nav-label">Inventario & Lotes</span>{% if page_id == 'inventory' %}<span
+          class="nav-active-dot"></span>{% endif %}</a>
+      <a class="nav-link {{ 'active' if page_id == 'manufacturing' }}" href="/manufactura"
+        aria-label="Manufactura y Producción" title="Manufactura y Producción" {% if page_id=='manufacturing'
+        %}aria-current="page" {% endif %}>{{ icon('factory') }}<span class="nav-label">Manufactura & BOM</span>{% if
+        page_id == 'manufacturing' %}<span class="nav-active-dot"></span>{% endif %}</a>
+      <a class="nav-link {{ 'active' if page_id == 'quality' }}" href="/calidad" aria-label="Gestión de Calidad"
+        title="Gestión de Calidad" {% if page_id=='quality' %}aria-current="page" {% endif %}>{{ icon('shield-check')
+        }}<span class="nav-label">Gestión de Calidad</span>{% if page_id == 'quality' %}<span
+          class="nav-active-dot"></span>{% endif %}</a>
+
+      <p class="nav-caption">MAESTROS Y DIRECTORIO</p>
+      <a class="nav-link {{ 'active' if page_id == 'clients' }}" href="/clientes" aria-label="Clientes" title="Clientes"
+        {% if page_id=='clients' %}aria-current="page" {% endif %}>{{ icon('users') }}<span class="nav-label">Directorio
+          de Clientes</span>{% if page_id == 'clients' %}<span class="nav-active-dot"></span>{% endif %}</a>
+      <a class="nav-link {{ 'active' if page_id == 'products' }}" href="/productos" aria-label="Catálogo de Productos"
+        title="Catálogo de Productos" {% if page_id=='products' %}aria-current="page" {% endif %}>{{ icon('layers')
+        }}<span class="nav-label">Catálogo & Precios</span>{% if page_id == 'products' %}<span
+          class="nav-active-dot"></span>{% endif %}</a>
+
+      <p class="nav-caption" data-finance>CONTROL FINANCIERO</p>
+      <a class="nav-link {{ 'active' if page_id == 'finance' }}" href="/finanzas" aria-label="Finanzas y Cobros"
+        title="Finanzas y Cobros" data-finance {% if page_id=='finance' %}aria-current="page" {% endif %}>{{
+        icon('money') }}<span class="nav-label">Finanzas & Tesorería</span>{% if page_id == 'finance' %}<span
+          class="nav-active-dot"></span>{% endif %}</a>
+      <a class="nav-link {{ 'active' if page_id == 'billing' }}" href="/facturacion"
+        aria-label="Facturación y Comprobantes" title="Facturación y Comprobantes" {% if page_id=='billing'
+        %}aria-current="page" {% endif %}>{{ icon('receipt') }}<span class="nav-label">Comprobantes & Venta</span>{% if
+        page_id == 'billing' %}<span class="nav-active-dot"></span>{% endif %}</a>
+
+      <p class="nav-caption">ANALÍTICA & CONTROL</p>
+      <a class="nav-link {{ 'active' if page_id == 'analytics' }}" href="/analitica" aria-label="Analítica y KPIs"
+        title="Analítica y KPIs" {% if page_id=='analytics' %}aria-current="page" {% endif %}>{{ icon('activity')
+        }}<span class="nav-label">Analítica & KPIs</span>{% if page_id == 'analytics' %}<span
+          class="nav-active-dot"></span>{% endif %}</a>
+      <a class="nav-link {{ 'active' if page_id == 'admin' }}" href="/administracion"
+        aria-label="Administración y Monitores" title="Administración y Monitores" {% if page_id=='admin'
+        %}aria-current="page" {% endif %}>{{ icon('database') }}<span class="nav-label">Monitores & Auditoría</span>{%
+        if page_id == 'admin' %}<span class="nav-active-dot"></span>{% endif %}</a>
+      <a class="nav-link {{ 'active' if page_id == 'project_logs' }}" href="/proyecto" aria-label="Bitácora de Proyecto"
+        title="Bitácora de Proyecto" {% if page_id=='project_logs' %}aria-current="page" {% endif %}>{{ icon('branch')
+        }}<span class="nav-label">Bitácora & Entrega</span>{% if page_id == 'project_logs' %}<span
+          class="nav-active-dot"></span>{% endif %}</a>
+
+      <p class="nav-caption">MI CUENTA</p>
+      <a class="nav-link {{ 'active' if page_id == 'profile' }}" href="/perfil" aria-label="Mi perfil" title="Mi perfil"
+        {% if page_id=='profile' %}aria-current="page" {% endif %}>{{ icon('user') }}<span class="nav-label">Mi
+          perfil</span></a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="connection"><span id="connection-dot" class="dot"></span><span class="nav-label"
+          id="connection-label">Conectando…</span></div>
+      <button class="nav-link logout" data-action="logout">{{ icon('logout') }}<span class="nav-label">Cerrar
+          sesión</span></button>
+      <small class="sidebar-version">ESPUMA ENTERPRISE / v2.0</small>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <header class="topbar">
+      <div class="breadcrumbs">
+        <button class="icon-button" id="sidebar-toggle" aria-controls="sidebar" aria-expanded="true"
+          aria-label="Contraer navegación">{{ icon('menu') }}</button>
+        <span class="breadcrumb-root">Enterprise Suite</span>{{ icon('chevron', 'breadcrumb-chevron') }}<span>{{ title
+          }}</span>
+      </div>
+
+      <!-- GLOBAL SEARCH (Ctrl+K) -->
+      <div class="topbar-search-wrap">
+        <button class="topbar-search-trigger" id="global-search-btn" type="button"
+          aria-label="Búsqueda global (Ctrl+K)">
+          {{ icon('search') }}
+          <span>Buscar productos, lotes, pedidos, proveedores…</span>
+          <kbd>Ctrl+K</kbd>
+        </button>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Module Launcher -->
+        <button class="icon-button" id="module-launcher-btn" aria-label="Lanzador de Módulos"
+          title="Lanzador de Módulos (Suite Grid)">{{ icon('grid') }}</button>
+
+        <!-- Central Approvals -->
+        <button class="icon-button" id="approvals-btn" aria-label="Bandeja de Aprobaciones"
+          title="Bandeja Central de Aprobaciones">
+          {{ icon('clipboard') }}
+          <span class="badge-count" id="approvals-badge" hidden>0</span>
+        </button>
+
+        <!-- Notifications -->
+        <button class="icon-button" id="notifications-button" aria-label="Ver alertas de inventario"
+          aria-expanded="false">
+          {{ icon('bell') }}
+          <span id="notification-dot" hidden></span>
+        </button>
+
+        <span class="today" id="today-label"></span>
+        <a href="/perfil" class="avatar" id="user-avatar" aria-label="Ver mi perfil">U</a>
+      </div>
+
+      <section class="notification-panel panel" id="notification-panel" hidden aria-label="Alertas">
+        <h3>Alertas de inventario y planta</h3>
+        <p id="notification-summary">Consultando existencias…</p>
+        <a href="/productos?filter=low" class="text-link">Revisar productos {{ icon('arrow') }}</a>
+      </section>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">ESPUMA · JABONERÍA</p>
+          <h1>{{ title }}</h1>
+          <p class="subtitle">{{ subtitle }}</p>
+        </div>
+        <div class="page-actions">{% block actions %}{% endblock %}</div>
+      </div>
+      <div class="error-banner" id="page-error" role="alert" hidden>
+        <span id="page-error-text"></span>
+        <button class="btn btn-secondary" data-action="reload">Reintentar</button>
+      </div>
+      {% block content %}{% endblock %}
+      <footer class="page-footer">
+        <span>ESPUMA ERP SUITE <span class="footer-divider">/</span> Operación empresarial integrada y trazable.</span>
+        <span id="last-updated" aria-live="polite">Cargando datos…</span>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast-region" id="toasts" role="status" aria-live="polite"></div>
+
+  <!-- Standard Form Dialog -->
+  <dialog id="form-dialog" aria-labelledby="dialog-title">
+    <form id="entity-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">GESTIÓN COMERCIAL</p>
+          <h2 id="dialog-title">Nuevo registro</h2>
+        </div>
+        <button class="icon-button" type="button" data-action="close-dialog" aria-label="Cerrar">{{ icon('close')
+          }}</button>
+      </div>
+      <div class="dialog-body" id="dialog-body"></div>
+      <p class="form-error" id="form-error" role="alert" hidden></p>
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-secondary" data-action="close-dialog">Cancelar</button>
+        <button class="btn btn-primary" id="save-button" type="submit">{{ icon('check') }} Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Detail Dialog -->
+  <dialog id="detail-dialog" class="wide-dialog" aria-labelledby="detail-title">
+    <div class="dialog-header">
+      <h2 id="detail-title">Detalle del pedido</h2>
+      <button class="icon-button" data-action="close-detail" aria-label="Cerrar">{{ icon('close') }}</button>
+    </div>
+    <div class="dialog-body" id="detail-body"></div>
+    <div class="dialog-footer">
+      <button class="btn btn-secondary" data-action="close-detail">Cerrar</button>
+      <button class="btn btn-primary" data-action="print">{{ icon('print') }} Imprimir / PDF</button>
+    </div>
+  </dialog>
+
+  <!-- Confirm Dialog -->
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <div class="dialog-header">
+      <h2 id="confirm-title">Confirmar acción</h2>
+    </div>
+    <div class="dialog-body">
+      <p id="confirm-message"></p>
+      <p class="form-error" id="confirm-error" role="alert" hidden></p>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-secondary" data-action="cancel-confirm">Cancelar</button>
+      <button class="btn btn-danger" id="confirm-button">Confirmar</button>
+    </div>
+  </dialog>
+
+  <!-- Finance Dialog -->
+  <dialog id="finance-dialog" aria-labelledby="finance-dialog-title">
+    <form id="finance-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">CONTROL FINANCIERO</p>
+          <h2 id="finance-dialog-title">Registrar movimiento</h2>
+        </div>
+        <button class="icon-button" type="button" data-action="close-finance" aria-label="Cerrar">{{ icon('close')
+          }}</button>
+      </div>
+      <div id="finance-form-body" class="dialog-body"></div>
+      <p id="finance-form-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-footer">
+        <button class="btn btn-secondary" type="button" data-action="close-finance">Cancelar</button>
+        <button class="btn btn-primary" id="finance-save" type="submit">{{ icon('check') }} Registrar
+          movimiento</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ENTERPRISE MODALS -->
+
+  <!-- Global Command Search (Ctrl+K) Modal -->
+  <dialog id="global-search-dialog" class="search-modal" aria-labelledby="gs-title">
+    <div class="search-modal-header">
+      {{ icon('search') }}
+      <input type="search" id="gs-input"
+        placeholder="Buscar en toda la Suite Enterprise (productos, clientes, lotes, pedidos)…" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-modal-body" id="gs-results">
+      <div class="search-hint-empty">Escribe al menos 2 caracteres para buscar en todos los módulos ERP.</div>
+    </div>
+    <div class="search-modal-footer">
+      <span>Navegar con teclado: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>ENTER</kbd> para abrir</span>
+    </div>
+  </dialog>
+
+  <!-- Module Launcher Grid Modal -->
+  <dialog id="module-launcher-dialog" class="launcher-modal" aria-labelledby="launcher-title">
+    <div class="dialog-header">
+      <div>
+        <p class="eyebrow">ENTERPRISE SUITE</p>
+        <h2 id="launcher-title">Lanzador de Módulos ERP</h2>
+      </div>
+      <button class="icon-button" type="button" data-action="close-launcher" aria-label="Cerrar">{{ icon('close')
+        }}</button>
+    </div>
+    <div class="dialog-body launcher-grid">
+      <a href="/pedidos" class="launcher-card">{{ icon('cart') }}<strong>Ventas</strong><small>Pedidos y
+          despacho</small></a>
+      <a href="/compras" class="launcher-card">{{ icon('truck') }}<strong>Compras</strong><small>Proveedores y
+          recepción</small></a>
+      <a href="/inventario" class="launcher-card">{{ icon('box') }}<strong>Inventario</strong><small>Stock y
+          lotes</small></a>
+      <a href="/manufactura" class="launcher-card">{{ icon('factory') }}<strong>Manufactura</strong><small>BOM y
+          órdenes</small></a>
+      <a href="/calidad" class="launcher-card">{{ icon('shield-check') }}<strong>Calidad</strong><small>Inspección y
+          ensayos</small></a>
+      <a href="/finanzas" class="launcher-card">{{ icon('money') }}<strong>Finanzas</strong><small>Tesorería y
+          cobros</small></a>
+      <a href="/clientes" class="launcher-card">{{ icon('users') }}<strong>Clientes</strong><small>Directorio
+          comercial</small></a>
+      <a href="/productos" class="launcher-card">{{ icon('layers') }}<strong>Productos</strong><small>Catálogo e
+          insumos</small></a>
+      <a href="/analitica" class="launcher-card">{{ icon('activity') }}<strong>Analítica</strong><small>KPIs y
+          OEE</small></a>
+      <a href="/administracion" class="launcher-card">{{ icon('database')
+        }}<strong>Administración</strong><small>Monitores y auditoría</small></a>
+      <a href="/proyecto" class="launcher-card">{{ icon('branch') }}<strong>Bitácora</strong><small>Evidencia y
+          control</small></a>
+      <a href="/perfil" class="launcher-card">{{ icon('user') }}<strong>Mi Cuenta</strong><small>Seguridad y
+          acceso</small></a>
+    </div>
+  </dialog>
+
+  <!-- Approvals Inbox Modal -->
+  <dialog id="approvals-dialog" class="wide-dialog" aria-labelledby="apv-title">
+    <div class="dialog-header">
+      <div>
+        <p class="eyebrow">GOBERNANZA</p>
+        <h2 id="apv-title">Bandeja Central de Aprobaciones</h2>
+      </div>
+      <button class="icon-button" type="button" data-action="close-approvals" aria-label="Cerrar">{{ icon('close')
+        }}</button>
+    </div>
+    <div class="dialog-body">
+      <p class="receipt-note">Revisa y autoriza solicitudes de compra, órdenes a proveedor y gastos operativos.</p>
+      <div id="approvals-list" class="approvals-container">Cargando aprobaciones…</div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-secondary" type="button" data-action="close-approvals">Cerrar</button>
+    </div>
+  </dialog>
+</body>
+
+</html>
+

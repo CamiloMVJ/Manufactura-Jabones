@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block actions %}
+<button class="btn btn-secondary" data-action="reload">{{ icon('refresh') }} Actualizar</button>
+<button class="btn btn-secondary" data-action="open-traceability-search">{{ icon('branch') }} Rastrear Lote</button>
+<a class="btn btn-primary" href="/pedidos?new=1" data-write>{{ icon('plus') }} Nueva venta</a>
+{% endblock %}
+
+{% block content %}
+<!-- 1. EXECUTIVE ERP FLOW PIPELINE (Section 12 & 33) -->
+<section class="panel erp-flow-panel" aria-label="Flujo de Operación ERP">
+  <div class="panel-heading">
+    <div>
+      <span class="eyebrow">CADENA DE VALOR CONECTADA</span>
+      <h2>Flujo Transaccional Operativo</h2>
+    </div>
+    <span class="badge badge-success">Operación Sincronizada</span>
+  </div>
+  <div class="erp-flow-pipeline">
+    <a href="/compras" class="flow-stage">
+      <div class="stage-icon-wrap">{{ icon('truck') }}</div>
+      <div class="stage-info"><span class="stage-title">1. Compras</span><strong id="flow-count-purchases">PO-001</strong><small>Abastecimiento</small></div>
+    </a>
+    <div class="flow-connector">{{ icon('arrow') }}</div>
+    <a href="/inventario" class="flow-stage">
+      <div class="stage-icon-wrap">{{ icon('box') }}</div>
+      <div class="stage-info"><span class="stage-title">2. Materia Prima</span><strong id="flow-count-raw">Lotes MP</strong><small>Almacén central</small></div>
+    </a>
+    <div class="flow-connector">{{ icon('arrow') }}</div>
+    <a href="/manufactura" class="flow-stage">
+      <div class="stage-icon-wrap">{{ icon('factory') }}</div>
+      <div class="stage-info"><span class="stage-title">3. Manufactura</span><strong id="flow-count-prod">OP en curso</strong><small>Tostado y molienda</small></div>
+    </a>
+    <div class="flow-connector">{{ icon('arrow') }}</div>
+    <a href="/calidad" class="flow-stage">
+      <div class="stage-icon-wrap">{{ icon('shield-check') }}</div>
+      <div class="stage-info"><span class="stage-title">4. Calidad</span><strong id="flow-count-qc">Puntos control</strong><small>Liberación</small></div>
+    </a>
+    <div class="flow-connector">{{ icon('arrow') }}</div>
+    <a href="/pedidos" class="flow-stage">
+      <div class="stage-icon-wrap">{{ icon('cart') }}</div>
+      <div class="stage-info"><span class="stage-title">5. Ventas / Despacho</span><strong id="flow-count-sales">En ruta</strong><small>Distribución</small></div>
+    </a>
+  </div>
+</section>
+
+<!-- 2. ATTENTION REQUIRED (Section 12) -->
+<section class="attention-box" id="dashboard-attention-box">
+  <div class="attention-header">{{ icon('alert') }}<strong>Atención Requerida en Planta y Almacén</strong></div>
+  <div class="attention-chips">
+    <a href="/productos?filter=low" class="attention-chip chip-warning">{{ icon('box') }} <span id="att-low-stock">3 productos con stock bajo</span></a>
+    <a href="/compras" class="attention-chip chip-info">{{ icon('truck') }} <span id="att-pending-po">1 orden de compra en recepción</span></a>
+    <a href="/calidad" class="attention-chip chip-purple">{{ icon('shield-check') }} <span id="att-qc-cases">Control de calidad activo</span></a>
+    <a href="/pedidos?filter=en_ruta" class="attention-chip chip-neutral">{{ icon('cart') }} <span id="att-open-orders">Entregas en despacho</span></a>
+  </div>
+</section>
+
+<!-- 3. WORKSPACE APP LAUNCHER (Section 13) -->
+<section class="module-workspace" aria-labelledby="modules-title">
+  <div class="module-heading">
+    <div><h2 id="modules-title">Módulos del Sistema</h2><p>Accede directamente al área operativa o administrativa requerida.</p></div>
+    <div class="module-tabs" aria-label="Filtrar módulos">
+      <button type="button" data-module-filter="all" class="selected" aria-pressed="true">Todos</button>
+      <button type="button" data-module-filter="operations" aria-pressed="false">Operaciones</button>
+      <button type="button" data-module-filter="commercial" aria-pressed="false">Comercial</button>
+      <button type="button" data-module-filter="governance" aria-pressed="false">Gestión</button>
+    </div>
+  </div>
+  <div class="module-grid enterprise-module-grid">
+    <a href="/compras" class="module-tile module-purchases" data-module="operations"><span class="module-top">{{ icon('truck') }}<span>01</span></span><strong>Abastecimiento</strong><span class="module-detail">Proveedores y recepción</span>{{ icon('arrow','module-arrow') }}</a>
+    <a href="/inventario" class="module-tile module-inventory" data-module="operations"><span class="module-top">{{ icon('box') }}<span>02</span></span><strong>Inventario & Lotes</strong><span class="module-detail" id="module-products">Trazabilidad y stock</span>{{ icon('arrow','module-arrow') }}</a>
+    <a href="/manufactura" class="module-tile module-manufacturing" data-module="operations"><span class="module-top">{{ icon('factory') }}<span>03</span></span><strong>Manufactura</strong><span class="module-detail">BOM, rutas y órdenes</span>{{ icon('arrow','module-arrow') }}</a>
+    <a href="/calidad" class="module-tile module-quality" data-module="operations"><span class="module-top">{{ icon('shield-check') }}<span>04</span></span><strong>Gestión de Calidad</strong><span class="module-detail">Inspecciones y ensayos</span>{{ icon('arrow','module-arrow') }}</a>
+    <a href="/pedidos" class="module-tile module-orders" data-module="commercial"><span class="module-top">{{ icon('cart') }}<span>05</span></span><strong>Ventas y Pedidos</strong><span class="module-detail" id="module-orders">Despacho y entregas</span>{{ icon('arrow','module-arrow') }}</a>
+    <a href="/clientes" class="module-tile module-clients" data-module="commercial"><span class="module-top">{{ icon('users') }}<span>06</span></span><strong>Clientes</strong><span class="module-detail" id="module-clients">Cartera y zonas</span>{{ icon('arrow','module-arrow') }}</a>
+    <a href="/finanzas" class="module-tile module-finance" data-module="commercial" data-finance><span class="module-top">{{ icon('money') }}<span>07</span></span><strong>Finanzas y Cobros</strong><span class="module-detail">Tesorería y cuentas</span>{{ icon('arrow','module-arrow') }}</a>
+    <a href="/analitica" class="module-tile module-analytics" data-module="governance"><span class="module-top">{{ icon('activity') }}<span>08</span></span><strong>Analítica & KPIs</strong><span class="module-detail">OEE, rotación y costos</span>{{ icon('arrow','module-arrow') }}</a>
+    <a href="/administracion" class="module-tile module-admin" data-module="governance"><span class="module-top">{{ icon('database') }}<span>09</span></span><strong>Administración</strong><span class="module-detail">Monitores y auditoría</span>{{ icon('arrow','module-arrow') }}</a>
+    <a href="/proyecto" class="module-tile module-project" data-module="governance"><span class="module-top">{{ icon('branch') }}<span>10</span></span><strong>Bitácora Proyecto</strong><span class="module-detail">Evidencia técnica</span>{{ icon('arrow','module-arrow') }}</a>
+  </div>
+</section>
+
+<!-- 4. KPIS CONTEXTUALES (Section 11 & 12) -->
+<div class="section-divider"><h2>Pulso Operacional de la Empresa</h2><span>INDICADORES EN VIVO</span></div>
+<section class="kpi-grid" aria-label="Indicadores generales">
+  {% for key,label,symbol,hint in [('sales','Facturación Total','money','Ventas acumuladas'),('orders','Pedidos de hoy','cart','Actividad del día'),('stock','Stock en Alerta','box','Menos de 10 unidades'),('clients','Clientes Registrados','users','Red de distribución')] %}
+  <article class="kpi-card"><div class="kpi-top"><span>{{ label }}</span><span class="kpi-icon {{ 'warning' if key == 'stock' }}">{{ icon(symbol) }}</span></div><strong class="kpi-value skeleton" id="kpi-{{ key }}">—</strong><p>{{ hint }}</p></article>
+  {% endfor %}
+</section>
+
+<!-- 5. CHARTS & RECENT OPERATIONS -->
+<section class="dashboard-grid">
+  <article class="panel sales-panel">
+    <div class="panel-heading"><div><h2>Ventas de los últimos 7 días</h2><p>Importes registrados por día · UTC</p></div><span class="badge badge-neutral">Esta semana</span></div>
+    <div class="chart-summary"><strong id="week-total">—</strong><span>Total del período</span></div>
+    <div class="sales-chart" id="sales-chart" aria-label="Ventas diarias"><p class="empty-inline">Cargando ventas…</p></div>
+  </article>
+
+  <article class="panel operation-panel">
+    <div class="dispatch-heading"><span class="section-icon">{{ icon('cart') }}</span><span class="eyebrow">CONTROL DE DESPACHO</span></div>
+    <strong class="dispatch-total" id="dispatch-total">—</strong>
+    <h2>Pedidos por completar</h2>
+    <p id="pending-summary">Consultando pedidos pendientes…</p>
+    <div class="dispatch-stages" id="dispatch-stages"></div>
+    <a class="btn btn-primary" href="/pedidos">Abrir control de pedidos {{ icon('arrow') }}</a>
+  </article>
+</section>
+
+<!-- 6. RANKINGS & PRIORIDADES -->
+<section class="dashboard-grid bottom-grid">
+  <article class="panel"><div class="panel-heading"><div><h2>Productos con mayor salida</h2><p>Unidades vendidas en todos los pedidos.</p></div>{{ icon('box') }}</div><div class="ranking-list" id="top-products"></div></article>
+  <article class="panel"><div class="panel-heading"><div><h2>Clientes con mayor compra</h2><p>Importe vendido, independiente del cobro.</p></div>{{ icon('users') }}</div><div class="ranking-list" id="top-clients"></div></article>
+</section>
+
+<section class="dashboard-grid bottom-grid">
+  <article class="panel"><div class="panel-heading"><div><h2>Distribución por zona</h2><p>Pedidos e importe registrado por zona de entrega.</p></div>{{ icon('arrow') }}</div><div class="zone-list" id="zone-list"></div></article>
+  <article class="panel"><div class="panel-heading"><div><h2>Prioridades de operación</h2><p>Pedidos abiertos más antiguos y vencimientos próximos.</p></div>{{ icon('alert') }}</div><div id="attention-list" class="attention-list"></div></article>
+</section>
+
+<!-- 7. RECENT ORDERS & ACTIVITY -->
+<section class="panel">
+  <div class="panel-heading">
+    <div><h2>Últimos pedidos registrados</h2><p>Movimiento comercial reciente con trazabilidad a lotes.</p></div>
+    <a class="text-link" href="/pedidos">Ver todos {{ icon('arrow') }}</a>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Importe</th><th>Estado</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+      <tbody id="recent-orders"><tr><td colspan="6" class="empty-cell">Cargando pedidos…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="dashboard-grid bottom-grid">
+  <article class="panel">
+    <div class="panel-heading">
+      <div><h2>Atención al inventario</h2><p>Productos con existencias bajas.</p></div>
+      <button class="icon-button" data-action="export" aria-label="Descargar reporte PDF">{{ icon('download') }}</button>
+    </div>
+    <div id="low-stock-list" class="list-content"><p class="empty-inline">Cargando inventario…</p></div>
+    <a class="panel-bottom-link" href="/productos?filter=low">Ver catálogo completo {{ icon('arrow') }}</a>
+  </article>
+  <article class="panel">
+    <div class="panel-heading"><div><h2>Actividad del sistema</h2><p>Historial reciente de transacciones y auditoría.</p></div>{{ icon('clock') }}</div>
+    <div id="activity-list" class="list-content"><p class="empty-inline">Cargando actividad…</p></div>
+  </article>
+</section>
+
+<!-- 8. DEMO FLOW PRESENTATION SUITE (Section 35 & 38) -->
+<details class="demo-tools">
+  <summary>{{ icon('refresh') }} Herramientas de Demostración y Presentación Académica</summary>
+  <div class="demo-tools-body">
+    <p>Ejecuta una demostración de ciclo completo conectando Compras &rarr; Recepción &rarr; Lote MP &rarr; Orden de Producción &rarr; Control Calidad &rarr; Lote PT &rarr; Venta &rarr; Despacho &rarr; Trazabilidad.</p>
+    <div class="demo-actions-row">
+      <button class="btn btn-primary" data-action="simulate-demo-flow">{{ icon('refresh') }} Ejecutar Flujo Transaccional Demostrativo</button>
+      <button class="btn btn-secondary" data-action="simulate" data-write>Simular venta rápida</button>
+    </div>
+    <div id="demo-flow-result" class="demo-result-panel" hidden></div>
+  </div>
+</details>
+{% endblock %}
+

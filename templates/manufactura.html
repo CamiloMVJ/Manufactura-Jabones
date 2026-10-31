@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block actions %}
+<button class="btn btn-secondary" data-action="reload">{{ icon('refresh') }} Actualizar</button>
+<button class="btn btn-primary" data-action="new-production-order" data-write>{{ icon('plus') }} Nueva orden de producción</button>
+{% endblock %}
+
+{% block content %}
+<div class="enterprise-module-header">
+  <div class="workflow-banner">
+    <span class="workflow-step active"><span class="step-num">1</span> Borrador</span>
+    {{ icon('chevron', 'step-sep') }}
+    <span class="workflow-step active"><span class="step-num">2</span> Planificado</span>
+    {{ icon('chevron', 'step-sep') }}
+    <span class="workflow-step active"><span class="step-num">3</span> Disponibilidad verificada</span>
+    {{ icon('chevron', 'step-sep') }}
+    <span class="workflow-step active"><span class="step-num">4</span> En Producción</span>
+    {{ icon('chevron', 'step-sep') }}
+    <span class="workflow-step active"><span class="step-num">5</span> Control de Calidad</span>
+    {{ icon('chevron', 'step-sep') }}
+    <span class="workflow-step"><span class="step-num">6</span> Completado / Lote PT</span>
+  </div>
+</div>
+
+<div class="module-subnav" role="tablist">
+  <button class="subnav-tab active" data-tab="orders" role="tab" aria-selected="true">{{ icon('factory') }} Órdenes de Producción</button>
+  <button class="subnav-tab" data-tab="boms" role="tab" aria-selected="false">{{ icon('layers') }} Listas de Materiales (BOM)</button>
+  <button class="subnav-tab" data-tab="routings" role="tab" aria-selected="false">{{ icon('cpu') }} Rutas y Centros de Trabajo</button>
+</div>
+
+<!-- TAB 1: ÓRDENES DE PRODUCCIÓN -->
+<section class="panel data-panel tab-content" id="tab-orders">
+  <div class="panel-heading">
+    <div>
+      <h2>Control de Órdenes de Fabricación <span class="count-pill" id="prod-orders-count">—</span></h2>
+      <p>Progreso en vivo de órdenes, asignación de centros de trabajo y avance de etapas operativas.</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Orden</th><th>Producto Terminado</th><th>Cantidad Plan.</th><th>Cantidad Prod.</th><th>Lote MP Consumido</th><th>Lote PT Generado</th><th>Estado</th><th>Acciones</th></tr>
+      </thead>
+      <tbody id="prod-orders-table-body"><tr><td colspan="8" class="empty-cell">Cargando órdenes de producción…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TAB 2: BOMs -->
+<section class="panel data-panel tab-content" id="tab-boms" hidden>
+  <div class="panel-heading">
+    <div>
+      <h2>Listas de Materiales y Fórmulas Estándar (BOM)</h2>
+      <p>Especificación de insumos, materias primas y porcentajes de merma por unidad de producto terminado.</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Código BOM</th><th>Producto Terminado</th><th>Versión</th><th>Cantidad Base</th><th>Componentes / Insumos</th><th>Estado</th></tr>
+      </thead>
+      <tbody id="boms-table-body"><tr><td colspan="6" class="empty-cell">Cargando listas de materiales…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TAB 3: RUTAS & CENTROS DE TRABAJO -->
+<section class="panel data-panel tab-content" id="tab-routings" hidden>
+  <div class="panel-heading">
+    <div>
+      <h2>Rutas de Fabricación y Centros de Trabajo</h2>
+      <p>Secuencia de operaciones estándar, tiempos de ciclo y capacidad de maquinaria instalada.</p>
+    </div>
+  </div>
+  <div class="dashboard-grid bottom-grid">
+    <article class="panel">
+      <div class="panel-heading"><h3>Centros de Trabajo Activos</h3>{{ icon('cpu') }}</div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Código</th><th>Nombre</th><th>Capacidad/hora</th><th>Costo/h</th><th>Estado</th></tr></thead>
+          <tbody id="wc-table-body"><tr><td colspan="5" class="empty-cell">Cargando centros de trabajo…</td></tr></tbody>
+        </table>
+      </div>
+    </article>
+    <article class="panel">
+      <div class="panel-heading"><h3>Hojas de Ruta Operativa</h3>{{ icon('branch') }}</div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Ruta</th><th>Producto</th><th>Secuencia Operaciones</th></tr></thead>
+          <tbody id="routings-table-body"><tr><td colspan="3" class="empty-cell">Cargando rutas…</td></tr></tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- Modal: Nueva Orden de Producción -->
+<dialog id="po-prod-dialog" aria-labelledby="po-prod-dialog-title">
+  <form id="po-prod-form">
+    <div class="dialog-header">
+      <div><p class="eyebrow">MANUFACTURA</p><h2 id="po-prod-dialog-title">Crear Orden de Producción</h2></div>
+      <button class="icon-button" type="button" data-action="close-prod-order" aria-label="Cerrar">{{ icon('close') }}</button>
+    </div>
+    <div class="dialog-body">
+      <div class="form-grid">
+        <label class="field full-width">Producto a fabricar *<select name="product_id" id="prod-order-product-select" required></select></label>
+        <label class="field">Cantidad planificada *<input name="planned_quantity" type="number" step="1" min="1" required value="50"></label>
+        <label class="field">Lote preferido del primer insumo (vacío: FEFO)<select name="raw_material_lot_id" id="prod-order-lot-select"></select></label>
+        <label class="field full-width">Notas / Turno de producción<textarea name="notes" rows="2" placeholder="Observaciones de la orden"></textarea></label>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-secondary" data-action="close-prod-order">Cancelar</button>
+      <button type="submit" class="btn btn-primary">{{ icon('check') }} Planificar Orden</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal: Detalle de Orden de Producción -->
+<dialog id="prod-detail-dialog" class="wide-dialog" aria-labelledby="prod-detail-title">
+  <div class="dialog-header">
+    <div><p class="eyebrow">ORDEN DE PRODUCCIÓN</p><h2 id="prod-detail-title">Detalle de Fabricación</h2></div>
+    <button class="icon-button" type="button" data-action="close-prod-detail" aria-label="Cerrar">{{ icon('close') }}</button>
+  </div>
+  <div class="dialog-body" id="prod-detail-body">
+    <!-- Populated dynamically via JS -->
+  </div>
+  <div class="dialog-footer">
+    <button class="btn btn-secondary" type="button" data-action="close-prod-detail">Cerrar</button>
+  </div>
+</dialog>
+{% endblock %}
+
+

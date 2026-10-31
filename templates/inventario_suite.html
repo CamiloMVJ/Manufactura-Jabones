@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block actions %}
+<button class="btn btn-secondary" data-action="reload">{{ icon('refresh') }} Actualizar</button>
+<a class="btn btn-secondary" href="/productos?filter=low">{{ icon('alert') }} Alertas de stock</a>
+<button class="btn btn-primary" data-action="open-traceability-search">{{ icon('branch') }} Rastrear Lote</button>
+{% endblock %}
+
+{% block content %}
+<section class="kpi-grid" id="inventory-kpis" aria-label="Indicadores de Inventario">
+  <article class="kpi-card"><div class="kpi-top"><span>Unidades en existencia</span><span class="kpi-icon">{{ icon('box') }}</span></div><strong class="kpi-value" id="kpi-inv-units">—</strong><p>En todos los almacenes</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Valoración del inventario</span><span class="kpi-icon">{{ icon('money') }}</span></div><strong class="kpi-value" id="kpi-inv-val">—</strong><p>Costo total acumulado</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Lotes controlados</span><span class="kpi-icon">{{ icon('layers') }}</span></div><strong class="kpi-value" id="kpi-inv-lots">—</strong><p>Materia prima y terminado</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Movimientos registrados</span><span class="kpi-icon">{{ icon('refresh') }}</span></div><strong class="kpi-value" id="kpi-inv-movs">—</strong><p>Auditoría de almacén</p></article>
+</section>
+
+<div class="module-subnav" role="tablist">
+  <button class="subnav-tab active" data-tab="lots" role="tab" aria-selected="true">{{ icon('layers') }} Lotes y Existencias</button>
+  <button class="subnav-tab" data-tab="movements" role="tab" aria-selected="false">{{ icon('refresh') }} Movimientos de Almacén</button>
+  <button class="subnav-tab" data-tab="traceability" role="tab" aria-selected="false">{{ icon('branch') }} Explorador de Trazabilidad</button>
+</div>
+
+<!-- TAB 1: LOTES -->
+<section class="panel data-panel tab-content" id="tab-lots">
+  <div class="panel-heading">
+    <div>
+      <h2>Control de Lotes y Fechas de Vencimiento <span class="count-pill" id="lots-count">—</span></h2>
+      <p>Trazabilidad por lote con cantidades iniciales, saldo actual y estado de liberación.</p>
+    </div>
+  </div>
+  <div class="table-toolbar">
+    <label class="search-input">{{ icon('search') }}<input id="lots-search" type="search" placeholder="Buscar por código de lote o producto…"></label>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Lote</th><th>Producto</th><th>Origen</th><th>Cantidad Inicial</th><th>Saldo Actual</th><th>Fabricación</th><th>Vencimiento</th><th>Estado</th><th>Trazabilidad</th></tr>
+      </thead>
+      <tbody id="lots-table-body"><tr><td colspan="9" class="empty-cell">Cargando lotes…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TAB 2: MOVIMIENTOS -->
+<section class="panel data-panel tab-content" id="tab-movements" hidden>
+  <div class="panel-heading">
+    <div>
+      <h2>Kardex y Registro de Movimientos de Inventario <span class="count-pill" id="movs-count">—</span></h2>
+      <p>Entradas por compra, consumos de manufactura, salidas de producto terminado y despachos.</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Código</th><th>Producto</th><th>Lote</th><th>Tipo Movimiento</th><th>Cantidad</th><th>Origen</th><th>Destino</th><th>Documento Ref.</th><th>Fecha</th></tr>
+      </thead>
+      <tbody id="movs-table-body"><tr><td colspan="9" class="empty-cell">Cargando movimientos…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TAB 3: TRAZABILIDAD -->
+<section class="panel data-panel tab-content" id="tab-traceability" hidden>
+  <div class="panel-heading">
+    <div>
+      <h2>Árbol de Trazabilidad Integral del Lote</h2>
+      <p>Responde con exactitud: ¿De dónde vino este producto? y ¿A qué cliente se vendió?</p>
+    </div>
+    <div class="trace-search-box">
+      <input type="text" id="trace-input" placeholder="Ingresa lote (ej. LOT-FG-2026-105)">
+      <button class="btn btn-primary" id="trace-btn">{{ icon('search') }} Rastrear</button>
+    </div>
+  </div>
+
+  <div class="traceability-view" id="trace-result-view">
+    <div class="empty-cell">Ingresa un número de lote o presiona «Ver Trazabilidad» en la tabla de lotes para visualizar su flujo.</div>
+  </div>
+</section>
+{% endblock %}
+
+

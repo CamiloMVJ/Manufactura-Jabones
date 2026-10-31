@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block actions %}
+<button class="btn btn-secondary" data-action="reload">{{ icon('refresh') }} Actualizar</button>
+<button class="btn btn-primary" data-action="new-inspection" data-write>{{ icon('shield-check') }} Nueva inspección</button>
+{% endblock %}
+
+{% block content %}
+<section class="kpi-grid" id="quality-kpis" aria-label="Indicadores de Calidad">
+  <article class="kpi-card"><div class="kpi-top"><span>Inspecciones realizadas</span><span class="kpi-icon">{{ icon('shield-check') }}</span></div><strong class="kpi-value" id="kpi-qc-total">—</strong><p>Puntos de control cubiertos</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Tasa de aprobación</span><span class="kpi-icon">{{ icon('check') }}</span></div><strong class="kpi-value text-success" id="kpi-qc-passrate">—</strong><p>Conforme a especificación</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>No conformidades</span><span class="kpi-icon warning">{{ icon('alert') }}</span></div><strong class="kpi-value" id="kpi-qc-ncs">—</strong><p>Desviaciones registradas</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Casos pendientes</span><span class="kpi-icon">{{ icon('clock') }}</span></div><strong class="kpi-value" id="kpi-qc-open">—</strong><p>En investigación o retrabajo</p></article>
+</section>
+
+<div class="module-subnav" role="tablist">
+  <button class="subnav-tab active" data-tab="inspections" role="tab" aria-selected="true">{{ icon('shield-check') }} Inspecciones de Calidad</button>
+  <button class="subnav-tab" data-tab="non-conformities" role="tab" aria-selected="false">{{ icon('alert') }} No Conformidades y Disposición</button>
+</div>
+
+<!-- TAB 1: INSPECCIONES -->
+<section class="panel data-panel tab-content" id="tab-inspections">
+  <div class="panel-heading">
+    <div>
+      <h2>Historial de Inspecciones y Ensayos de Laboratorio <span class="count-pill" id="inspections-count">—</span></h2>
+      <p>Controles sobre materia prima, producto en proceso y producto terminado previo a su liberación.</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Código</th><th>Producto</th><th>Lote</th><th>Tipo Control</th><th>Valor Esperado</th><th>Valor Medido</th><th>Resultado</th><th>Inspector</th><th>Fecha</th></tr>
+      </thead>
+      <tbody id="inspections-table-body"><tr><td colspan="9" class="empty-cell">Cargando inspecciones…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TAB 2: NO CONFORMIDADES -->
+<section class="panel data-panel tab-content" id="tab-non-conformities" hidden>
+  <div class="panel-heading">
+    <div>
+      <h2>Registro de No Conformidades y Disposición <span class="count-pill" id="ncs-count">—</span></h2>
+      <p>Disposiciones aprobadas: Desecho (Scrap), Retrabajo (Rework) o Liberación Condicional (Release).</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Código</th><th>Producto</th><th>Lote</th><th>Severidad</th><th>Descripción Desviación</th><th>Causa Raíz</th><th>Disposición</th><th>Estado</th><th>Acciones</th></tr>
+      </thead>
+      <tbody id="ncs-table-body"><tr><td colspan="9" class="empty-cell">Cargando no conformidades…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Modal: Nueva Inspección -->
+<dialog id="qc-dialog" aria-labelledby="qc-dialog-title">
+  <form id="qc-form">
+    <div class="dialog-header">
+      <div><p class="eyebrow">ASEGURAMIENTO DE CALIDAD</p><h2 id="qc-dialog-title">Registrar Inspección de Calidad</h2></div>
+      <button class="icon-button" type="button" data-action="close-qc" aria-label="Cerrar">{{ icon('close') }}</button>
+    </div>
+    <div class="dialog-body"><label class="field">ID de orden de producción (ver en Manufactura)<input name="production_order_id" type="number" min="1" placeholder="Obligatorio para liberar una producción"></label>
+      <div class="form-grid">
+        <label class="field full-width">Producto inspeccionado *<select name="product_id" id="qc-product-select" required></select></label>
+        <label class="field">Tipo de inspección *<select name="inspection_type"><option value="finished_goods">Producto Terminado (PT)</option><option value="in_process">En Proceso (Molienda / Tostado)</option><option value="incoming_raw_material">Materia Prima en Recepción</option></select></label>
+        <label class="field">Resultado del ensayo *<select name="result"><option value="passed">Aprobado / Conforme</option><option value="failed">No Conforme / Rechazado</option><option value="conditional">Liberación Condicional</option></select></label>
+        <label class="field full-width">Valor o parámetro esperado<input name="expected_value" placeholder="Ej. 100 g netos; empaque íntegro; sin separación"></label>
+        <label class="field full-width">Valor medido en ensayo<input name="measured_value" placeholder="Ej. Peso mínimo 100.4 g; 10 empaques íntegros"></label>
+        <label class="field full-width">Observaciones del inspector<textarea name="observations" rows="2" placeholder="Observaciones de peso, apariencia, empaque y lote"></textarea></label>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-secondary" data-action="close-qc">Cancelar</button>
+      <button type="submit" class="btn btn-primary">{{ icon('check') }} Guardar Inspección</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal: Disposición de No Conformidad -->
+<dialog id="disposition-dialog" aria-labelledby="disp-dialog-title">
+  <form id="disposition-form">
+    <input type="hidden" name="nc_id" id="disp-nc-id">
+    <div class="dialog-header">
+      <div><p class="eyebrow">DISPOSICIÓN TÉCNICA</p><h2 id="disp-dialog-title">Definir Disposición de No Conformidad</h2></div>
+      <button class="icon-button" type="button" data-action="close-disp" aria-label="Cerrar">{{ icon('close') }}</button>
+    </div>
+    <div class="dialog-body">
+      <p id="disp-nc-description" class="receipt-note"></p>
+      <div class="form-grid">
+        <label class="field full-width">Disposición dictaminada *<select name="disposition"><option value="rework">Retrabajo (Rework) - Reacondicionar lote</option><option value="scrap">Desecho / Merma (Scrap) - Destruir o dar de baja</option><option value="release">Liberación con Concesión (Release) - Apto uso alternativo</option></select></label>
+        <label class="field full-width">Acción correctiva / Notas de disposición *<textarea name="notes" rows="3" required placeholder="Detalla el procedimiento de reproceso o baja"></textarea></label>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-secondary" data-action="close-disp">Cancelar</button>
+      <button type="submit" class="btn btn-primary">{{ icon('check') }} Aplicar Disposición</button>
+    </div>
+  </form>
+</dialog>
+{% endblock %}
+
+

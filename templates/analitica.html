@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block actions %}
+<button class="btn btn-secondary" data-action="reload">{{ icon('refresh') }} Actualizar métricas</button>
+<button class="btn btn-secondary" data-action="export">{{ icon('download') }} Exportar reporte stock PDF</button>
+<a class="btn btn-primary" href="/finanzas">{{ icon('money') }} Tesorería</a>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-hero-banner">
+  <div>
+    <span class="eyebrow">INTELIGENCIA OPERACIONAL ERP</span>
+    <h2>Centro de Control y Analítica Ejecutiva</h2>
+    <p>Ventas y compras calculadas desde registros. Las métricas que requieren mediciones adicionales se indican como no disponibles.</p>
+  </div>
+  <div class="analytics-live-tag">{{ icon('activity') }} Métricas en Vivo</div>
+</div>
+
+<!-- SECCIÓN 1: KPI DE MANUFACTURA -->
+<div class="section-divider"><h2>Manufactura y Eficiencia de Planta</h2><span>RENDIMIENTO INDUSTRIAL</span></div>
+<section class="kpi-grid" aria-label="KPI de Manufactura">
+  <article class="kpi-card"><div class="kpi-top"><span>OEE (Eficacia Global de Equipos)</span><span class="kpi-icon">{{ icon('cpu') }}</span></div><strong class="kpi-value text-success" id="kpi-mfg-oee">—</strong><p>Disponibilidad × Rendimiento × Calidad</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Rendimiento / Yield</span><span class="kpi-icon">{{ icon('check') }}</span></div><strong class="kpi-value" id="kpi-mfg-yield">—</strong><p>Proporción de lote conforme a primera</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Tasa de Merma / Scrap</span><span class="kpi-icon warning">{{ icon('alert') }}</span></div><strong class="kpi-value text-danger" id="kpi-mfg-scrap">—</strong><p>Pérdidas reales pendientes de captura</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Tiempo de Ciclo Promedio</span><span class="kpi-icon">{{ icon('clock') }}</span></div><strong class="kpi-value" id="kpi-mfg-cycle">—</strong><p>Requiere registrar tiempos efectivos</p></article>
+</section>
+
+<!-- SECCIÓN 2: KPI DE INVENTARIO -->
+<div class="section-divider"><h2>Gestión de Inventario y Almacenes</h2><span>ROTACIÓN Y COBERTURA</span></div>
+<section class="kpi-grid" aria-label="KPI de Inventario">
+  <article class="kpi-card"><div class="kpi-top"><span>Rotación de Inventario</span><span class="kpi-icon">{{ icon('refresh') }}</span></div><strong class="kpi-value" id="kpi-inv-turnover">—</strong><p>Ventas / Valoración de stock</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Valor a precios de catálogo</span><span class="kpi-icon">{{ icon('money') }}</span></div><strong class="kpi-value" id="kpi-inv-valuation">—</strong><p>Mezcla costo de insumos y precio de venta</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Días de Cobertura Estimados</span><span class="kpi-icon">{{ icon('layers') }}</span></div><strong class="kpi-value" id="kpi-inv-coverage">—</strong><p>Suficiencia para demanda proyectada</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Productos en Alerta</span><span class="kpi-icon warning">{{ icon('box') }}</span></div><strong class="kpi-value text-danger" id="kpi-inv-alerts">—</strong><p>Por debajo del stock mínimo (10 uds.)</p></article>
+</section>
+
+<!-- SECCIÓN 3: KPI DE COMPRAS Y ABASTECIMIENTO -->
+<div class="section-divider"><h2>Compras y Abastecimiento</h2><span>EFICIENCIA DE CADENA DE SUMINISTRO</span></div>
+<section class="kpi-grid" aria-label="KPI de Compras">
+  <article class="kpi-card"><div class="kpi-top"><span>Volumen Total Comprado</span><span class="kpi-icon">{{ icon('truck') }}</span></div><strong class="kpi-value" id="kpi-proc-vol">—</strong><p>Bases, fragancias, sales y empaques</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Costo Promedio por Orden</span><span class="kpi-icon">{{ icon('money') }}</span></div><strong class="kpi-value" id="kpi-proc-avg">—</strong><p>Importe medio de compra</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Tiempo de Entrega (Lead Time)</span><span class="kpi-icon">{{ icon('clock') }}</span></div><strong class="kpi-value" id="kpi-proc-lead">—</strong><p>Días promedio desde emisión a recepción</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Recepciones Pendientes</span><span class="kpi-icon">{{ icon('box') }}</span></div><strong class="kpi-value" id="kpi-proc-pending">—</strong><p>Órdenes en tránsito de entrega</p></article>
+</section>
+
+<!-- SECCIÓN 4: KPI DE VENTAS Y COMERCIAL -->
+<div class="section-divider"><h2>Ventas y Rendimiento Comercial</h2><span>INGRESOS Y CLIENTES</span></div>
+<section class="kpi-grid" aria-label="KPI de Ventas">
+  <article class="kpi-card"><div class="kpi-top"><span>Facturación Registrada</span><span class="kpi-icon">{{ icon('cart') }}</span></div><strong class="kpi-value text-success" id="kpi-sales-rev">—</strong><p>Importe total de pedidos emitidos</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Pedidos Totales Emitidos</span><span class="kpi-icon">{{ icon('receipt') }}</span></div><strong class="kpi-value" id="kpi-sales-orders">—</strong><p>En toda la red de distribución</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Ticket Promedio (AOV)</span><span class="kpi-icon">{{ icon('money') }}</span></div><strong class="kpi-value" id="kpi-sales-aov">—</strong><p>Valor medio por pedido vendido</p></article>
+  <article class="kpi-card"><div class="kpi-top"><span>Cumplimiento de Despacho</span><span class="kpi-icon">{{ icon('check') }}</span></div><strong class="kpi-value" id="kpi-sales-ontime">—</strong><p>Entregas efectivas a tiempo</p></article>
+</section>
+{% endblock %}
+
+
