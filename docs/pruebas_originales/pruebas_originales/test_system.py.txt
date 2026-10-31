@@ -1,0 +1,301 @@
+"""Pruebas HTTP reales con SQLite aislado; no usan datos ni credenciales locales."""
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+import json
+import os
+from pathlib import Path
+import socket
+import subprocess
+import sys
+import tempfile
+import time
+import unittest
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+from decimal import Decimal
+from uuid import uuid4
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class ERPSystemTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="fridays-tests-")
+        cls.db_path = Path(cls.temp.name) / "test.sqlite"
+        cls.env = {**os.environ, "DATABASE_URL": "sqlite:///" + cls.db_path.as_posix(),
+                   "SECRET_KEY": "test-only-secret-key-with-more-than-32-characters",
+                   "APP_ENV": "development", "PYTHONDONTWRITEBYTECODE": "1"}
+        # Solo el proceso de pruebas hereda estas variables, nunca se edita .env.
+        os.environ.update({key: cls.env[key] for key in ("DATABASE_URL", "SECRET_KEY", "APP_ENV")})
+        sys.path.insert(0, str(ROOT))
+        from app.db.database import init_db, SessionLocal
+        from app.models.erp_models import User, Client, Product
+        from app.core.security import get_password_hash
+        init_db()
+        with SessionLocal() as db:
+            hashed = get_password_hash("test-pass-123")
+            for name, role, active in [("admin", "administrador", True), ("sales", "vendedor", True), ("driver", "repartidor", True), ("inactive", "administrador", False)]:
+                db.add(User(username=name, email=name+"@example.test", hashed_password=hashed, role=role, is_active=active))
+            db.add(Client(name="Cliente de prueba", email="cliente@example.test", zone="Centro"))
+            for i in range(1, 24):
+                db.add(Product(name=f"Producto {i:02}", price=10.25, stock=20 if i != 2 else 0, category="Granos"))
+            db.commit()
+        with socket.socket() as sock:
+            sock.bind(("127.0.0.1", 0))
+            cls.port = sock.getsockname()[1]
+        cls.base = f"http://127.0.0.1:{cls.port}"
+        cls.log = open(Path(cls.temp.name) / "server.log", "w", encoding="utf-8")
+        cls.start_server()
+        cls.tokens = {}
+        for name in ("admin", "sales", "driver"):
+            code, data = cls.request("POST", "/auth/login", {"username": name, "password": "test-pass-123"}, form=True)
+            assert code == 200, data
+            cls.tokens[name] = data["access_token"]
+
+    @classmethod
+    def start_server(cls):
+        cls.stop_file = Path(cls.temp.name) / "stop-server"
+        cls.stop_file.unlink(missing_ok=True)
+        cls.env["ERP_TEST_STOP_FILE"] = str(cls.stop_file)
+        cls.process = subprocess.Popen([sys.executable, str(ROOT / "tests" / "run_server.py"), str(cls.port)], cwd=ROOT, env=cls.env, stdout=cls.log, stderr=cls.log)
+        for _ in range(100):
+            try:
+                with urlopen(cls.base+"/health", timeout=1) as response:
+                    if response.status == 200:
+                        return
+            except OSError:
+                if cls.process.poll() is not None:
+                    break
+                time.sleep(.1)
+        raise RuntimeError("No inició el servidor de pruebas. Revisa el log: " + cls.temp.name)
+
+    @classmethod
+    def request(cls, method, path, data=None, user=None, form=False, raw=False):
+        headers = {}
+        if user:
+            headers["Authorization"] = "Bearer " + cls.tokens[user]
+        body = None
+        if data is not None:
+            body = (urlencode(data) if form else json.dumps(data)).encode()
+            headers["Content-Type"] = "application/x-www-form-urlencoded" if form else "application/json"
+        request = Request(cls.base+path, data=body, method=method, headers=headers)
+        try:
+            response = urlopen(request, timeout=15)
+        except HTTPError as error:
+            response = error
+        with response:
+            content = response.read()
+            return response.status, content if raw else json.loads(content)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.stop_server()
+        cls.log.close()
+        from app.db.database import engine
+        engine.dispose()
+        cls.temp.cleanup()
+
+    @classmethod
+    def stop_server(cls):
+        cls.stop_file.touch()
+        cls.process.wait(timeout=10)
+
+    def test_authentication_and_inactive_users(self):
+        for endpoint in ("/products/", "/clients/", "/orders/", "/reports/dashboard", "/reports/export/pdf", "/auth/me"):
+            self.assertEqual(self.request("GET", endpoint)[0], 401, endpoint)
+        self.assertEqual(self.request("POST", "/auth/login", {"username": "inactive", "password": "test-pass-123"}, form=True)[0], 403)
+        self.assertEqual(self.request("POST", "/auth/login", {"username": "admin", "password": "wrong"}, form=True)[0], 401)
+        self.assertEqual(self.request("GET", "/auth/me", user="driver")[1]["role"], "repartidor")
+
+    def test_development_secret_is_persistent_and_production_requires_configuration(self):
+        from unittest.mock import patch
+        from app.core import config
+        config.get_secret_key.cache_clear()
+        try:
+            with patch.object(config, "BASE_DIR", Path(self.temp.name)), patch.object(config, "APP_ENV", "development"), patch.dict(os.environ, {"SECRET_KEY": ""}):
+                first = config.get_secret_key()
+                config.get_secret_key.cache_clear()
+                self.assertEqual(config.get_secret_key(), first)
+            config.get_secret_key.cache_clear()
+            with patch.object(config, "APP_ENV", "production"), patch.dict(os.environ, {"SECRET_KEY": ""}):
+                with self.assertRaises(RuntimeError):
+                    config.get_secret_key()
+        finally:
+            config.get_secret_key.cache_clear()
+
+    def test_pages_and_static_assets(self):
+        for path in ("/", "/login", "/clientes", "/productos", "/pedidos", "/facturacion", "/perfil", "/finanzas", "/finanzas.html", "/clientes.html", "/pedidos.html", "/productos.html", "/facturacion.html", "/facturizacion", "/facturizacion.html", "/perfil.html", "/static/css/styles.css", "/static/js/main.js", "/static/js/operations.js"):
+            code, body = self.request("GET", path, raw=True)
+            self.assertEqual(code, 200, path)
+            self.assertNotIn(b"{{", body, path)
+
+    def test_validation_and_role_permissions(self):
+        self.assertEqual(self.request("PUT", "/products/1/stock?quantity=10")[0], 401)
+        self.assertEqual(self.request("PUT", "/products/1/stock?quantity=10", user="driver")[0], 403)
+        self.assertEqual(self.request("PUT", "/products/1/stock?quantity=-1", user="admin")[0], 422)
+        invalid = [{"client_id": 1, "items": []}, {"client_id": 1, "items": [{"product_id":1,"quantity":-1}]}, {"client_id":1,"items":[{"product_id":1,"quantity":0}]}]
+        for data in invalid:
+            self.assertEqual(self.request("POST", "/orders/", data, "admin")[0], 422)
+        self.assertEqual(self.request("POST", "/products/", {"name":" ","stock":-1,"price":-1}, "admin")[0], 422)
+        self.assertEqual(self.request("PUT", "/products/1", {"stock":None}, "admin")[0], 422)
+        self.assertEqual(self.request("POST", "/orders/", {"client_id":1,"items":[{"product_id":1,"quantity":1}]}, "driver")[0], 403)
+
+    def test_order_failure_rolls_back_header_items_stock_and_log(self):
+        before = self.request("GET", "/products/", user="admin")[1][0]["stock"]
+        orders_before = len(self.request("GET", "/orders/", user="admin")[1])
+        for data in [
+            {"client_id":9999,"items":[{"product_id":1,"quantity":1}]},
+            {"client_id":1,"items":[{"product_id":1,"quantity":2},{"product_id":9999,"quantity":1}]},
+            {"client_id":1,"items":[{"product_id":1,"quantity":2},{"product_id":2,"quantity":1}]},
+        ]:
+            self.assertIn(self.request("POST", "/orders/", data, "admin")[0], (404,409))
+            self.assertEqual(self.request("GET", "/products/", user="admin")[1][0]["stock"], before)
+            self.assertEqual(len(self.request("GET", "/orders/", user="admin")[1]), orders_before)
+
+    def test_duplicate_lines_and_status_workflow(self):
+        code, order = self.request("POST", "/orders/", {"client_id":1,"items":[{"product_id":3,"quantity":1},{"product_id":3,"quantity":2}]}, "sales")
+        self.assertEqual(code, 200, order)
+        self.assertEqual(order["total_amount"], 30.75)
+        detail = self.request("GET", f"/orders/{order['id']}", user="admin")[1]
+        self.assertEqual(len(detail["items"]), 1)
+        self.assertEqual(detail["items"][0]["quantity"], 3)
+        route = f"/orders/{order['id']}/status"
+        self.assertEqual(self.request("PATCH", route, {"status":"entregado"}, "admin")[0], 409)
+        self.assertEqual(self.request("PATCH", route, {"status":"preparado"}, "driver")[0], 403)
+        for status, user in [("preparado","sales"),("en_ruta","driver"),("entregado","driver")]:
+            self.assertEqual(self.request("PATCH", route, {"status":status}, user)[0], 200)
+        self.assertEqual(self.request("DELETE", "/products/3", user="admin")[0], 400)
+        recent = self.request("GET", "/reports/recent-orders", user="admin")[1]
+        self.assertEqual(next(o for o in recent if o["id"] == order["id"])["status"], "entregado")
+
+    def test_concurrent_orders_do_not_oversell(self):
+        self.request("PUT", "/products/4/stock?quantity=1", user="admin")
+        data = {"client_id":1,"items":[{"product_id":4,"quantity":1}]}
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            results = list(executor.map(lambda _: self.request("POST", "/orders/", data, "sales")[0], range(2)))
+        self.assertEqual(sorted(results), [200,409])
+        stock = next(p for p in self.request("GET", "/products/", user="admin")[1] if p["id"] == 4)["stock"]
+        self.assertEqual(stock, 0)
+
+    def test_reports_export_and_clients(self):
+        code, client = self.request("POST", "/clients/", {"name":"Cliente nuevo","email":"new@example.test","zone":"Sur"}, "sales")
+        self.assertEqual(code, 200)
+        code, edited = self.request("PUT", f"/clients/{client['id']}", {"name":"Cliente actualizado","email":"new@example.test","zone":"Norte"}, "sales")
+        self.assertEqual(code, 200)
+        self.assertEqual(edited["zone"], "Norte")
+        self.assertEqual(len(self.request("GET", "/reports/sales-trend", user="admin")[1]), 7)
+        low = self.request("GET", "/reports/low-stock", user="admin")[1]
+        self.assertEqual(next(p for p in low if p["id"] == 2)["category"], "Granos")
+        code, pdf = self.request("GET", "/reports/export/pdf", user="admin", raw=True)
+        self.assertEqual(code, 200)
+        self.assertTrue(pdf.startswith(b"%PDF"))
+
+    def make_finance_order(self):
+        code, order = self.request("POST", "/orders/", {"client_id":1,"items":[{"product_id":5,"quantity":2}]}, "sales")
+        self.assertEqual(code, 200, order)
+        return order["id"]
+
+    def test_finance_permissions_and_amount_validation(self):
+        self.assertEqual(self.request("GET", "/finance/overview")[0],401)
+        self.assertEqual(self.request("GET", "/finance/overview",user="driver")[0],403)
+        self.assertEqual(self.request("GET", "/finance/overview",user="sales")[0],200)
+        expense={"description":"Combustible", "category":"transporte", "amount":"10.00", "method":"efectivo", "request_id":str(uuid4())}
+        self.assertEqual(self.request("POST", "/finance/expenses",expense,"sales")[0],403)
+        self.assertEqual(self.request("POST", "/finance/expenses",expense,"driver")[0],403)
+        for value in ("0", "-1", "1.001", "NaN", "Infinity"):
+            self.assertEqual(self.request("POST", "/finance/expenses",{**expense,"amount":value},"admin")[0],422,value)
+
+    def test_finance_partial_payment_balance_and_idempotency(self):
+        order_id = self.make_finance_order()
+        data={"order_id":order_id,"amount":"7.10","method":"transferencia","reference":"TEST-PARTIAL","request_id":str(uuid4())}
+        code, payment = self.request("POST", "/finance/payments",data,"sales")
+        self.assertEqual(code,201,payment)
+        repeated = self.request("POST", "/finance/payments",data,"sales")
+        self.assertEqual(repeated[0],201,repeated)
+        self.assertEqual(repeated[1]["id"],payment["id"])
+        self.assertEqual(self.request("POST", "/finance/payments",{**data,"amount":"6.00"},"sales")[0],409)
+        accounts = self.request("GET", "/finance/overview",user="admin")[1]["receivables"]
+        account = next(r for r in accounts if r["id"] == order_id)
+        self.assertEqual(Decimal(account["balance"]),Decimal("13.40"))
+        self.assertEqual(Decimal(account["paid"]),Decimal("7.10"))
+        self.assertEqual(self.request("POST", "/finance/payments",{**data,"request_id":str(uuid4()),"amount":"13.41"},"sales")[0],409)
+        self.assertEqual(self.request("POST", "/finance/payments",{**data,"request_id":str(uuid4()),"amount":"13.40"},"sales")[0],201)
+        account = next(r for r in self.request("GET", "/finance/overview",user="admin")[1]["receivables"] if r["id"] == order_id)
+        self.assertEqual(Decimal(account["balance"]),Decimal("0"))
+
+    def test_finance_concurrent_payments_cannot_exceed_order(self):
+        order_id = self.make_finance_order()
+        def pay(_):
+            return self.request("POST", "/finance/payments",{"order_id":order_id,"amount":"15.00","method":"efectivo","request_id":str(uuid4())},"sales")[0]
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            codes = list(executor.map(pay,range(2)))
+        self.assertEqual(sorted(codes),[201,409])
+        account = next(r for r in self.request("GET", "/finance/overview",user="admin")[1]["receivables"] if r["id"] == order_id)
+        self.assertEqual(Decimal(account["balance"]),Decimal("5.50"))
+
+    def test_finance_expense_idempotency_and_summary(self):
+        before = self.request("GET", "/finance/overview",user="admin")[1]["summary"]
+        data={"description":"Gasto de verificación", "category":"transporte", "amount":"4.35", "method":"efectivo", "request_id":str(uuid4())}
+        code, expense = self.request("POST", "/finance/expenses",data,"admin")
+        self.assertEqual(code,201,expense)
+        repeated = self.request("POST", "/finance/expenses",data,"admin")
+        self.assertEqual(repeated[1]["id"],expense["id"])
+        self.assertEqual(self.request("POST", "/finance/expenses",{**data,"amount":"5.00"},"admin")[0],409)
+        data = self.request("GET", "/finance/overview",user="admin")[1]
+        self.assertEqual(Decimal(data["summary"]["expenses"])-Decimal(before["expenses"]),Decimal("4.35"))
+        self.assertEqual(Decimal(data["summary"]["net_recorded"]),Decimal(data["summary"]["collected"])-Decimal(data["summary"]["expenses"]))
+        self.assertEqual(len(data["trend"]),7)
+
+    def test_order_timeline_tracks_real_transitions(self):
+        code, order = self.request("POST", "/orders/", {"client_id":1,"items":[{"product_id":6,"quantity":1}]}, "sales")
+        self.assertEqual(code,200)
+        order_id=order["id"]
+        self.assertEqual(self.request("PATCH",f"/orders/{order_id}/status",{"status":"preparado"},"sales")[0],200)
+        detail=self.request("GET",f"/orders/{order_id}",user="driver")[1]
+        self.assertEqual([e["status"] for e in detail["timeline"]],["pendiente","preparado"])
+        self.assertEqual(detail["timeline"][-1]["previous_status"],"pendiente")
+        self.assertEqual(detail["timeline"][-1]["username"],"sales")
+        self.assertEqual(detail["zone"],"Centro")
+        self.assertIn("top_clients",self.request("GET","/reports/operations",user="driver")[1])
+
+    def test_order_concurrent_transition_keeps_single_history_event(self):
+        order_id=self.make_finance_order()
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            results=list(executor.map(lambda _:self.request("PATCH",f"/orders/{order_id}/status",{"status":"preparado"},"sales")[0],range(2)))
+        self.assertEqual(sorted(results),[200,409])
+        timeline=self.request("GET",f"/orders/{order_id}",user="admin")[1]["timeline"]
+        self.assertEqual([e["status"] for e in timeline],["pendiente","preparado"])
+
+    def test_websocket_authentication(self):
+        import websockets
+        async def check():
+            async with websockets.connect(f"ws://127.0.0.1:{self.port}/ws/updates") as ws:
+                await ws.send(self.tokens["admin"])
+                self.assertEqual(json.loads(await ws.recv())["type"], "CONNECTED")
+            async with websockets.connect(f"ws://127.0.0.1:{self.port}/ws/updates") as ws:
+                await ws.send("invalid-token")
+                with self.assertRaises(websockets.exceptions.ConnectionClosed):
+                    await ws.recv()
+                self.assertEqual(ws.close_code, 1008)
+        asyncio.run(check())
+
+    def test_z_token_survives_server_restart(self):
+        self.stop_server()
+        self.start_server()
+        self.assertEqual(self.request("GET", "/auth/me", user="admin")[0], 200)
+
+
+if __name__ == "__main__":
+    if "--serve" in sys.argv:
+        ERPSystemTests.setUpClass()
+        print(json.dumps({"base": ERPSystemTests.base, "username": "admin", "password": "test-pass-123", "stop_file": str(ERPSystemTests.stop_file)}), flush=True)
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            ERPSystemTests.tearDownClass()
+    else:
+        unittest.main(verbosity=2)
+

@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel" style="padding:24px;margin-bottom:20px"><h2>Catálogo de Espuma</h2><p>Jabones de base preparada, sales sin perfume, accesorios y kits. Cada fórmula incluye el empaque.</p><p>Los insumos se controlan en gramos [g] y los empaques y productos en unidades [u]. Precios y costos de ejemplo en córdobas; las recetas requieren validación piloto.</p><p id="recipe-status" role="status">Cargando recetas…</p></section>
+<div id="recipe-cards" class="dashboard-grid"></div>
+<script src="/static/js/recetas.js" defer></script>
+{% endblock %}

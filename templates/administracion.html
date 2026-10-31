@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block actions %}
+<button class="btn btn-secondary" data-action="reload">{{ icon('refresh') }} Actualizar</button>
+<button class="btn btn-primary" data-action="simulate-demo-flow">{{ icon('refresh') }} Ejecutar Flujo Completo Demostrativo</button>
+{% endblock %}
+
+{% block content %}
+<div class="module-subnav" role="tablist">
+  <button class="subnav-tab active" data-tab="monitors" role="tab" aria-selected="true">{{ icon('activity') }} Monitor del Sistema y Salud de Datos</button>
+  <button class="subnav-tab" data-tab="audit" role="tab" aria-selected="false">{{ icon('clock') }} Registro de Auditoría</button>
+  <button class="subnav-tab" data-tab="users" role="tab" aria-selected="false">{{ icon('users') }} Usuarios y Permisos</button>
+  <button class="subnav-tab" data-tab="integrations" role="tab" aria-selected="false">{{ icon('cpu') }} Centro de Integraciones</button>
+</div>
+
+<!-- TAB 1: MONITORES DE SISTEMA Y SALUD DE DATOS -->
+<section class="tab-content" id="tab-monitors">
+  <!-- System Health Card -->
+  <div class="dashboard-grid">
+    <article class="panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Monitor de Infraestructura y Estado del Sistema</h2>
+          <p>Métricas reales obtenidas del host de ejecución y motor de base de datos.</p>
+        </div>
+        <span class="badge badge-success" id="sys-status-badge">Operational</span>
+      </div>
+      <div class="system-monitor-grid">
+        <div class="monitor-tile">
+          <span class="monitor-label">Motor de Base de Datos</span>
+          <strong id="sys-db-status">SQLite (Conectado)</strong>
+          <small id="sys-db-size">Tamaño: 0.1 MB</small>
+        </div>
+        <div class="monitor-tile">
+          <span class="monitor-label">Uso de Memoria RAM</span>
+          <strong id="sys-mem-pct">— %</strong>
+          <small>Procesos ERP en ejecución</small>
+        </div>
+        <div class="monitor-tile">
+          <span class="monitor-label">Almacenamiento en Disco</span>
+          <strong id="sys-disk-pct">— %</strong>
+          <small>Volumen local de datos</small>
+        </div>
+        <div class="monitor-tile">
+          <span class="monitor-label">Servicio Web & API</span>
+          <strong class="text-success">FastAPI / Uvicorn</strong>
+          <small id="sys-python-ver">Python 3.11</small>
+        </div>
+      </div>
+      <div class="system-meta-footer">
+        <span>Último respaldo de datos: <strong id="sys-backup">—</strong></span>
+        <span>Última sincronización programada: <strong id="sys-cron">—</strong></span>
+      </div>
+    </article>
+
+    <!-- Data Health Card -->
+    <article class="panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Monitor de Salud de Datos ERP</h2>
+          <p>Diagnóstico de integridad referencial, faltantes de BOM y coherencia de existencias.</p>
+        </div>
+        <span class="data-health-badge" id="data-health-score">98%</span>
+      </div>
+      <div class="data-health-summary">
+        <p class="health-status-text" id="data-health-status">Base de datos íntegra y consistente.</p>
+        <div class="health-counts-grid">
+          <div><span>Productos:</span><strong id="dh-products">—</strong></div>
+          <div><span>Clientes:</span><strong id="dh-clients">—</strong></div>
+          <div><span>Proveedores:</span><strong id="dh-suppliers">—</strong></div>
+          <div><span>Lotes activos:</span><strong id="dh-lots">—</strong></div>
+          <div><span>Fórmulas BOM:</span><strong id="dh-boms">—</strong></div>
+          <div><span>Órdenes Producción:</span><strong id="dh-pos">—</strong></div>
+        </div>
+      </div>
+      <div class="inconsistencies-list" id="dh-inconsistencies">
+        <!-- Rendered dynamically -->
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- TAB 2: AUDITORÍA -->
+<section class="panel data-panel tab-content" id="tab-audit" hidden>
+  <div class="panel-heading">
+    <div>
+      <h2>Pista de Auditoría de Eventos Críticos <span class="count-pill" id="audit-count">—</span></h2>
+      <p>Trazabilidad de creación, actualización, cambios de estado y transacciones financieras y de planta.</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Fecha y Hora</th><th>Usuario</th><th>Acción</th><th>Módulo</th><th>Registro / Documento</th><th>Dirección IP</th><th>Estado Anterior / Detalle</th></tr>
+      </thead>
+      <tbody id="audit-table-body"><tr><td colspan="7" class="empty-cell">Cargando eventos de auditoría…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TAB 3: USUARIOS Y ACCESO -->
+<section class="panel data-panel tab-content" id="tab-users" hidden>
+  <div class="panel-heading">
+    <div>
+      <h2>Control de Acceso y Roles de Usuario <span class="count-pill" id="users-count">—</span></h2>
+      <p>Gestión granular basada en roles: Administrador, Gerente ERP, Producción, Calidad, Almacén y Ventas.</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Usuario</th><th>Correo</th><th>Rol Asignado</th><th>Estado</th><th>Permisos Granulares</th></tr>
+      </thead>
+      <tbody id="users-table-body"><tr><td colspan="6" class="empty-cell">Cargando usuarios…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TAB 4: INTEGRACIONES -->
+<section class="panel data-panel tab-content" id="tab-integrations" hidden>
+  <div class="panel-heading">
+    <div>
+      <h2>Centro de Conectores e Integraciones</h2>
+      <p>Estado de interfaces API REST, Webhooks de mensajería y telemetría de planta.</p>
+    </div>
+  </div>
+  <div class="integrations-grid">
+    <div class="integration-card">
+      <div class="integration-top"><span class="int-icon">{{ icon('cpu') }}</span><span class="badge badge-success">Conectado</span></div>
+      <h3>API REST OpenAPI / Swagger</h3>
+      <p>Interfaz para integración con sistemas contables y clientes externos.</p>
+      <div class="integration-meta"><span>Endpoint: /docs</span><a href="/docs" target="_blank" class="text-link">Explorar API {{ icon('arrow') }}</a></div>
+    </div>
+    <div class="integration-card">
+      <div class="integration-top"><span class="int-icon">{{ icon('activity') }}</span><span class="badge badge-success">Conectado</span></div>
+      <h3>Canal WebSocket en Vivo</h3>
+      <p>Actualización bidireccional en tiempo real de pedidos y alertas de stock.</p>
+      <div class="integration-meta"><span>Endpoint: /ws/updates</span><span>Latencia &lt; 5ms</span></div>
+    </div>
+    <div class="integration-card">
+      <div class="integration-top"><span class="int-icon">{{ icon('factory') }}</span><span class="badge badge-neutral">Simulación Activa</span></div>
+      <h3>Telemetría de Centros de Trabajo (IoT)</h3>
+      <p>Revisión de disponibilidad de centros de elaboración y empaque.</p>
+      <div class="integration-meta"><span>Modbus / MQTT Broker</span><span>Estado: Normal</span></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block actions %}
+<button class="btn btn-secondary" data-action="reload">{{ icon('refresh') }} Actualizar</button>
+<a class="btn btn-primary" href="/docs" target="_blank">{{ icon('clipboard') }} Ver API OpenAPI</a>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-hero-banner">
+  <div>
+    <span class="eyebrow">EVIDENCIA TÉCNICA Y ACADÉMICA</span>
+    <h2>Bitácora de Proyecto, Contribuciones y Control de Incidencias</h2>
+    <p>Registro estructurado del desarrollo de la Suite Enterprise, arquitectura modular y soluciones técnicas implementadas.</p>
+  </div>
+  <div class="analytics-live-tag">{{ icon('branch') }} Versión 2.0 Enterprise</div>
+</div>
+
+<div class="module-subnav" role="tablist">
+  <button class="subnav-tab active" data-tab="contrib" role="tab" aria-selected="true">{{ icon('branch') }} Registro de Contribuciones</button>
+  <button class="subnav-tab" data-tab="issues" role="tab" aria-selected="false">{{ icon('alert') }} Bitácora de Incidencias Técnicas</button>
+</div>
+
+<!-- TAB 1: CONTRIBUCIONES -->
+<section class="panel data-panel tab-content" id="tab-contrib">
+  <div class="panel-heading">
+    <div>
+      <h2>Matriz de Contribución y Desarrollo de Módulos</h2>
+      <p>Entregables completados por área funcional del ERP empresarial.</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Colaborador / Equipo</th><th>Tarea Desarrollada</th><th>Módulo</th><th>Descripción del Entregable</th><th>Referencia Commit</th><th>Estado</th></tr>
+      </thead>
+      <tbody id="contrib-table-body"><tr><td colspan="6" class="empty-cell">Cargando registro de contribuciones…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TAB 2: INCIDENCIAS -->
+<section class="panel data-panel tab-content" id="tab-issues" hidden>
+  <div class="panel-heading">
+    <div>
+      <h2>Registro Estructurado de Desafíos e Incidencias Técnicas</h2>
+      <p>Problemas detectados durante el ciclo de vida del software, impacto, causa raíz y solución aplicada.</p>
+    </div>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Incidencia Técnica</th><th>Módulo Afectado</th><th>Impacto</th><th>Causa Raíz</th><th>Solución Implementada</th><th>Estado</th><th>Responsable</th></tr>
+      </thead>
+      <tbody id="issues-table-body"><tr><td colspan="7" class="empty-cell">Cargando bitácora de incidencias…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+
+
